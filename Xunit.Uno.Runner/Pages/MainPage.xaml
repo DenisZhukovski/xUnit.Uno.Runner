@@ -1,0 +1,91 @@
+﻿<Page
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ui="clr-namespace:Uno.Toolkit.UI;assembly=Uno.Toolkit.WinUI"
+      xmlns:viewModels="clr-namespace:Xunit.Uno.Runner"
+      xmlns:ux="clr-namespace:Xunit.Uno.Runner.UX"
+      x:Class="Xunit.Uno.Runner.MainPage"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+  <Page.Resources>
+    <ux:RunStatusToColorConverter x:Key="RunStatusToColorConverter"/>
+    <ux:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+  </Page.Resources>
+  <StackPanel>
+    <ui:NavigationBar
+      Content="Test Runner"
+      Style="{StaticResource NativeDefaultNavigationBar}"/>
+    <Grid RowSpacing="10">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto"/>
+        <RowDefinition />
+      </Grid.RowDefinitions>
+
+      <ListView Grid.Row="1"
+                Padding="0"
+                Margin="0"
+                ItemsSource="{Binding TestAssemblies}">
+        <ListView.HeaderTemplate>
+          <DataTemplate>
+            <TextBlock Padding="10, 0" Text="Test Assemblies:" FontWeight="Bold" />
+          </DataTemplate>
+        </ListView.HeaderTemplate>
+        <ListView.ItemTemplate>
+          <DataTemplate x:DataType="viewModels:TestCasesViewModel">
+            <StackPanel Padding="0, 10" Margin="0" Spacing="5">
+              <TextBlock Text="{Binding DisplayName}"
+                         Foreground="{Binding TestCycleResult.RunStatus, Converter={StaticResource RunStatusToColorConverter}}" />
+              <StackPanel Orientation="Horizontal" Spacing="5">
+                <TextBlock Text="✔" Foreground="{StaticResource VisualRunnerSuccessfulTestsColor}" />
+                <TextBlock
+                  Text="{Binding TestCycleResult.Passed}"
+                  Foreground="{StaticResource VisualRunnerSuccessfulTestsColor}"
+                  Margin="0,0,15,0" />
+
+                <TextBlock Text="⛔" Foreground="{StaticResource VisualRunnerFailedTestsColor}" />
+                <TextBlock Text="{Binding TestCycleResult.Failed}" Foreground="{StaticResource VisualRunnerFailedTestsColor}" Margin="0,0,15,0" />
+
+                <TextBlock Text="⚠" Foreground="{StaticResource VisualRunnerSkippedTestsColor}" />
+                <TextBlock Text="{Binding TestCycleResult.Skipped}" Foreground="{StaticResource VisualRunnerSkippedTestsColor}" Margin="0,0,15,0" />
+
+                <TextBlock Text="🔷" Foreground="{StaticResource VisualRunnerNotRunTestsColor}" />
+                <TextBlock Text="{Binding TestCycleResult.NotRun}" Foreground="{StaticResource VisualRunnerNotRunTestsColor}" />
+                <ProgressRing
+                  IsActive="{Binding IsBusy}"
+                  VerticalAlignment="Center"
+                  HorizontalContentAlignment="Right"/>
+              </StackPanel>
+            </StackPanel>
+          </DataTemplate>
+        </ListView.ItemTemplate>
+      </ListView>
+      <!-- additional controls -->
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="2" Spacing="5">
+        <Button Content="Run All Tests" Command="{Binding RunEverythingCommand}" />
+        <Button Content="Credits" Command="{Binding CreditsCommand}" />
+      </StackPanel>
+      <!-- additional output -->
+      <TextBlock Grid.Row="3" Text="Diagnostic Information:" FontWeight="Bold" />
+      <ScrollViewer
+        Grid.Row="4"
+        ZoomMode="Disabled"
+        IsVerticalScrollChainingEnabled="True"
+        VerticalAlignment="Top"
+        HorizontalAlignment="Left">
+        <TextBlock Text="{Binding Diagnostic.Messages}" />
+      </ScrollViewer>
+      <!-- busy indicator -->
+      <!-- <StackPanel -->
+      <!--   Grid.RowSpan="5" -->
+      <!--   Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}" -->
+      <!--   Background="#CCFFFFFF" -->
+      <!--   VerticalAlignment="Stretch" -->
+      <!--   HorizontalAlignment="Stretch" Spacing="20"> -->
+      <!--   <TextBlock Text="Working..." VerticalAlignment="Center" HorizontalAlignment="Center" /> -->
+      <!--   <ProgressRing IsActive="{Binding IsBusy}" VerticalAlignment="Center" /> -->
+      <!-- </StackPanel> -->
+    </Grid>
+  </StackPanel>
+</Page>

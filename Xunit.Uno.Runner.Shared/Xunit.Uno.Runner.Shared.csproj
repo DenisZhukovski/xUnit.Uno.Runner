@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.Build.NoTargets/3.7.56">
+  <PropertyGroup>
+    <!-- NOTE: The TargetFramework is required by MSBuild but not used as this project is not built. -->
+    <TargetFramework>$(DotNetVersion)</TargetFramework>
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <RootNamespace>Xunit.Uno.Runner.Shared</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="**\*" Exclude="obj\**;bin\**;*.csproj" />
+    <None Update="AppHead.xaml.cs" DependentUpon="AppHead.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Uno.Extensions.Navigation.WinUI" />
+  </ItemGroup>
+</Project>

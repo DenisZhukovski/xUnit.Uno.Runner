@@ -1,0 +1,10 @@
+{
+  "background_color": "#ffffff",
+  "description": "Xunit.Uno.Runner",
+  "display": "standalone",
+  "name": "Xunit.Uno.Runner",
+  "short_name": "Xunit.Uno.Runner",
+  "start_url": "/index.html",
+  "theme_color": "#ffffff",
+  "scope": "/"
+}

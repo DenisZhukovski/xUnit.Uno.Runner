@@ -1,0 +1,10 @@
+{
+	"profiles": {
+		"Xunit.Uno.Runner.Windows (Unpackaged)": {
+			"commandName": "Project"
+		},
+		"Xunit.Uno.Runner.Windows (Package)": {
+			"commandName": "MsixPackage"
+		}
+	}
+}
