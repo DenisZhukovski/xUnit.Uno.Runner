@@ -8,12 +8,14 @@ public class LoggedAsyncCommand : IAsyncCommand
     private readonly IAsyncCommand _origin;
     private readonly ILog _log;
     private readonly string? _name;
+    private readonly bool _fullLog;
 
-    public LoggedAsyncCommand(IAsyncCommand origin, ILog log, string? name)
+    public LoggedAsyncCommand(IAsyncCommand origin, ILog log, string? name, bool fullLog = true)
     {
         _origin = origin;
         _log = log;
         _name = name;
+        _fullLog = fullLog;
     }
 
     public event EventHandler? CanExecuteChanged
@@ -21,13 +23,21 @@ public class LoggedAsyncCommand : IAsyncCommand
         add
         {
             _origin.CanExecuteChanged += value;
-            _log.Write("Command", $"AsyncCommand {_name} {nameof(CanExecuteChanged)} subscribed");
+            if (_fullLog)
+            {
+                _log.Write("Command", $"AsyncCommand {_name} {nameof(CanExecuteChanged)} subscribed");
+            }
+            
         }
 
         remove
         {
             _origin.CanExecuteChanged -= value;
-            _log.Write("Command", $"AsyncCommand {_name} {nameof(CanExecuteChanged)} unsubscribed");
+            if (_fullLog)
+            {
+                _log.Write("Command", $"AsyncCommand {_name} {nameof(CanExecuteChanged)} unsubscribed");
+            }
+           
         }
     }
 
@@ -36,7 +46,11 @@ public class LoggedAsyncCommand : IAsyncCommand
         try
         {
             _origin.Cancel();
-            _log.Write("Command", $"{_name} command cancelled.");
+            if (_fullLog)
+            {
+                 _log.Write("Command", $"{_name} command cancelled.");
+            }
+           
         }
         catch (Exception ex)
         {
@@ -54,7 +68,11 @@ public class LoggedAsyncCommand : IAsyncCommand
         try
         {
             var result = _origin.CanExecute(parameter);
-            _log.Write("Command", $"{_name} {nameof(CanExecute)} with parameter {parameter} is {result}.");
+            if (_fullLog)
+            {
+                 _log.Write("Command", $"{_name} {nameof(CanExecute)} with parameter {parameter} is {result}.");
+            }
+           
             return result;
         }
         catch (Exception ex)
@@ -73,7 +91,11 @@ public class LoggedAsyncCommand : IAsyncCommand
         try
         {
             _origin.Execute(parameter);
-            _log.Write("Command", $"{_name} with parameter {parameter} executed.");
+            if (_fullLog)
+            {
+                _log.Write("Command", $"{_name} with parameter {parameter} executed.");
+            }
+           
         }
         catch (Exception ex)
         {
@@ -93,10 +115,14 @@ public class LoggedAsyncCommand : IAsyncCommand
             var executed = await _origin
                 .ExecuteAsync(parameter)
                 .ConfigureAwait(false);
-            _log.Write(
-                "Command",
-                $"{_name} with parameter {parameter} was executed: {executed})."
-            );
+            if (_fullLog)
+            {
+                _log.Write(
+                    "Command",
+                    $"{_name} with parameter {parameter} was executed: {executed})."
+                );
+            }
+            
             return executed;
         }
         catch (Exception ex)
@@ -115,7 +141,10 @@ public class LoggedAsyncCommand : IAsyncCommand
         try
         {
             _origin.RaiseCanExecuteChanged();
-            _log.Write("Command", $"{_name} {nameof(RaiseCanExecuteChanged)} called.");
+            if (_fullLog)
+            {
+                _log.Write("Command", $"{_name} {nameof(RaiseCanExecuteChanged)} called.");
+            }
         }
         catch (Exception ex)
         {
@@ -134,12 +163,14 @@ public class LoggedAsyncCommand<TParam> : IAsyncCommand<TParam>
     private readonly IAsyncCommand<TParam> _origin;
     private readonly ILog _logger;
     private readonly string? _name;
+    private readonly bool _fullLog;
 
-    public LoggedAsyncCommand(IAsyncCommand<TParam> origin, ILog logger, string? name)
+    public LoggedAsyncCommand(IAsyncCommand<TParam> origin, ILog logger, string? name, bool fullLog = true)
     {
         _origin = origin;
         _logger = logger;
         _name = name;
+        _fullLog = fullLog;
     }
 
     public event EventHandler? CanExecuteChanged
@@ -147,13 +178,19 @@ public class LoggedAsyncCommand<TParam> : IAsyncCommand<TParam>
         add
         {
             _origin.CanExecuteChanged += value;
-            _logger.Write("Command", $"AsyncCommand<TParam> {_name} CanExecuteChanged subscribed");
+            if (_fullLog)
+            {
+                _logger.Write("Command", $"AsyncCommand<TParam> {_name} CanExecuteChanged subscribed");
+            }
         }
 
         remove
         {
             _origin.CanExecuteChanged -= value;
-            _logger.Write("Command", $"AsyncCommand<TParam> {_name} CanExecuteChanged unsubscribed");
+            if (_fullLog)
+            {
+                _logger.Write("Command", $"AsyncCommand<TParam> {_name} CanExecuteChanged unsubscribed");
+            }
         }
     }
 
@@ -162,7 +199,11 @@ public class LoggedAsyncCommand<TParam> : IAsyncCommand<TParam>
         try
         {
             _origin.Cancel();
-            _logger.Write("Command", $"{_name} Cancel operation success.");
+            if (_fullLog)
+            {
+                _logger.Write("Command", $"{_name} Cancel operation success.");
+            }
+            
         }
         catch (Exception ex)
         {
@@ -180,7 +221,11 @@ public class LoggedAsyncCommand<TParam> : IAsyncCommand<TParam>
         try
         {
             var result = _origin.CanExecute(parameter);
-            _logger.Write("Command", $"{_name} Check CanExecute with parameter {parameter} is {result}.");
+            if (_fullLog)
+            {
+                _logger.Write("Command", $"{_name} Check CanExecute with parameter {parameter} is {result}.");
+            }
+           
             return result;
         }
         catch (Exception ex)
@@ -199,7 +244,11 @@ public class LoggedAsyncCommand<TParam> : IAsyncCommand<TParam>
         try
         {
             _origin.Execute(parameter);
-            _logger.Write("Command", $"{_name} Execute operation with parameter {parameter} is successful.");
+            if (_fullLog)
+            {
+                _logger.Write("Command", $"{_name} Execute operation with parameter {parameter} is successful.");
+            }
+            
         }
         catch (Exception ex)
         {
@@ -219,10 +268,14 @@ public class LoggedAsyncCommand<TParam> : IAsyncCommand<TParam>
             var executed = await _origin
                 .ExecuteAsync(parameter)
                 .ConfigureAwait(false);
-            _logger.Write(
-                "Command",
-                $"{_name} ExecuteAsync<TParam> with parameter {parameter} is finished (was executed: {executed})."
-            );
+                if (_fullLog)
+            {
+                _logger.Write(
+                    "Command",
+                    $"{_name} ExecuteAsync<TParam> with parameter {parameter} is finished (was executed: {executed})."
+                );
+            }
+            
             return executed;
         }
         catch (Exception ex)
@@ -243,10 +296,14 @@ public class LoggedAsyncCommand<TParam> : IAsyncCommand<TParam>
             var executed = await _origin
                 .ExecuteAsync(parameter)
                 .ConfigureAwait(false);
-            _logger.Write(
-                "Command",
-                $"{_name} ExecuteAsync operation with parameter {parameter} is finished (was executed:{executed})."
-            );
+                if (_fullLog)
+            {
+                 _logger.Write(
+                    "Command",
+                    $"{_name} ExecuteAsync operation with parameter {parameter} is finished (was executed:{executed})."
+                );
+            }
+           
             return executed;
         }
         catch (Exception ex)
@@ -265,7 +322,11 @@ public class LoggedAsyncCommand<TParam> : IAsyncCommand<TParam>
         try
         {
             _origin.RaiseCanExecuteChanged();
-            _logger.Write("Command", $"{_name} RaiseCanExecuteChanged operation success.");
+            if (_fullLog)
+            {
+                _logger.Write("Command", $"{_name} RaiseCanExecuteChanged operation success.");
+            }
+            
         }
         catch (Exception ex)
         {

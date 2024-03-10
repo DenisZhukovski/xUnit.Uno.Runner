@@ -20,7 +20,7 @@ namespace Xunit.Uno.Runner
 		{
             _navigator = navigator;
             _testsScanner = testsScanner;
-            _commands = commands.Cached().Logged(Diagnostic);
+            _commands = commands.Cached().Logged(Diagnostic, false);
 		}
 
         private CancellationToken? ProgressCancelToken
@@ -57,7 +57,7 @@ namespace Xunit.Uno.Runner
                 {
                     ProgressCancelToken = token;
                     Diagnostic.Clear();
-                    Diagnostic.Messages = "Run Everything";
+                    Diagnostic.Write("Run Everything");
                     await TestAssemblies.RunAsync(token);
                 }
                 finally

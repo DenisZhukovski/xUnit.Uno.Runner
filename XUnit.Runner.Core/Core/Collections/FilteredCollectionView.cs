@@ -6,8 +6,8 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 
-namespace XUnit.Runners.Core
-{
+namespace XUnit.Runners.Core;
+
 	public class FilteredCollectionView<T, TFilterArg> : IList<T>, IList, INotifyCollectionChanged, IDisposable
 	{
 		readonly ObservableCollection<T> _dataSource;
@@ -17,7 +17,7 @@ namespace XUnit.Runners.Core
 
 		public FilteredCollectionView(ObservableCollection<T> dataSource, Func<T, TFilterArg, bool> filter, TFilterArg filterArgument, IComparer<T> sort)
 		{
-            _ = sort ?? throw new ArgumentNullException(nameof(sort));
+        _ = sort ?? throw new ArgumentNullException(nameof(sort));
 			_dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
 			_filter = filter ?? throw new ArgumentNullException(nameof(filter));
 			_filterArgument = filterArgument;
@@ -51,34 +51,31 @@ namespace XUnit.Runners.Core
 			_filteredList.Clear();
 		}
 
-		int IList.Add(object value)
+    int IList.Add(object? value) => throw new NotSupportedException();
+
+    void IList.Clear()
 		{
 			throw new NotSupportedException();
 		}
 
-		void IList.Clear()
-		{
-			throw new NotSupportedException();
-		}
-
-		bool IList.Contains(object value)
+		bool IList.Contains(object? value)
 		{
 			return Contains((T)value);
 		}
 
-		int IList.IndexOf(object value)
+		int IList.IndexOf(object? value)
 		{
 			return IndexOf((T)value);
 		}
 
-		void IList.Insert(int index, object value)
+		void IList.Insert(int index, object? value)
 		{
 			throw new NotSupportedException();
 		}
 
 		bool IList.IsFixedSize => false;
 
-		void IList.Remove(object value)
+		void IList.Remove(object? value)
 		{
 			throw new NotSupportedException();
 		}
@@ -91,7 +88,7 @@ namespace XUnit.Runners.Core
 		object IList.this[int index]
 		{
 			get => this[index];
-            set { throw new NotSupportedException(); }
+        set { throw new NotSupportedException(); }
 		}
 
 		void ICollection.CopyTo(Array array, int index)
@@ -216,15 +213,15 @@ namespace XUnit.Runners.Core
 
 					break;
 				case NotifyCollectionChangedAction.Reset:
+            {
+                _filteredList.Clear();
+                foreach (var item in _dataSource)
                 {
-                    _filteredList.Clear();
-                    foreach (var item in _dataSource)
-                    {
-                        OnAdded(item);
-                    }
-
-                    break;
+                    OnAdded(item);
                 }
+
+                break;
+            }
 			}
 		}
 
@@ -297,4 +294,3 @@ namespace XUnit.Runners.Core
 			OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
 		}
 	}
-}

@@ -40,7 +40,6 @@ public class App : Application
     {
         services.AddSingleton(new Commands().Validated());
         services.AddSingleton<ITestScanner>(new AssemblyTestsScanner(assemblies: typeof(UnitTests).Assembly));
-        // services.AddTransient<HomeViewModel>();
     }
     
     private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)

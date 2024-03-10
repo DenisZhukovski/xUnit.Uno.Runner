@@ -31,4 +31,11 @@ public readonly struct TestResult(ITestCase @case, ITestResultMessage message, T
     public string ErrorStackTrace => state == TestState.Failed
         ? ExceptionUtility.CombineStackTraces((ITestFailed)Message)
         : string.Empty;
+
+    public override string ToString()
+    {
+        var index = Case.DisplayName.LastIndexOf(".") + 1;
+        var name = Case.DisplayName.Substring(index,  Case.DisplayName.Length - index);
+        return $"{name}:{state}";
+    }
 }

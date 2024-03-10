@@ -7,12 +7,14 @@ public class LoggedCommand : ICommand
     private readonly ICommand _origin;
     private readonly ILog _logger;
     private readonly string? _name;
+    private readonly bool _fullLog;
 
-    public LoggedCommand(ICommand origin, ILog logger, string? name)
+    public LoggedCommand(ICommand origin, ILog logger, string? name, bool fullLog = true)
     {
         _origin = origin;
         _logger = logger;
         _name = name;
+        _fullLog = fullLog;
     }
 
     public event EventHandler? CanExecuteChanged
@@ -20,13 +22,19 @@ public class LoggedCommand : ICommand
         add
         {
             _origin.CanExecuteChanged += value;
-            _logger.Write("Command", $"Command {_name} CanExecuteChanged subscribed");
+            if (_fullLog)
+            {
+                _logger.Write("Command", $"Command {_name} CanExecuteChanged subscribed");
+            }
         }
 
         remove
         {
             _origin.CanExecuteChanged -= value;
-            _logger.Write("Command", $"Command {_name} CanExecuteChanged unsubscribed");
+            if (_fullLog)
+            {
+                _logger.Write("Command", $"Command {_name} CanExecuteChanged unsubscribed");
+            }
         }
     }
 
@@ -35,7 +43,11 @@ public class LoggedCommand : ICommand
         try
         {
             var result = _origin.CanExecute(parameter);
-            _logger.Write("Command", $"{_name} Check CanExecute with parameter {parameter} is {result}.");
+            if (_fullLog)
+            {
+                _logger.Write("Command", $"{_name} Check CanExecute with parameter {parameter} is {result}.");
+            }
+            
             return result;
         }
         catch (Exception ex)
@@ -50,7 +62,10 @@ public class LoggedCommand : ICommand
         try
         {
             _origin.Execute(parameter);
-            _logger.Write("Command", $"{_name} Execute operation with parameter {parameter} success.");
+            if (_fullLog)
+            {
+                _logger.Write("Command", $"{_name} Execute operation with parameter {parameter} success.");
+            }
         }
         catch (Exception ex)
         {

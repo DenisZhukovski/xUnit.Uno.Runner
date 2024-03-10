@@ -1,10 +1,9 @@
 using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.ComponentModel;
 using XUnit.Runners.Core;
 
 namespace Xunit.Uno.Runner;
 
-public class TestCycleResultViewModel : ObservableObject
+public class TestCycleResultViewModel : DispatchedBindableBase
 {
     private readonly ObservableCollection<TestCaseViewModel> _allTests;
     TestState _result = TestState.NotRun;

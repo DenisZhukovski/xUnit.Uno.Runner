@@ -1,12 +1,11 @@
 ﻿using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.ComponentModel;
 using Dotnet.Commands;
 using XUnit.Runners.Core;
 using Xunit.Uno.Runner.Extensions;
 
 namespace Xunit.Uno.Runner
 {
-	public class TestCasesViewModel : ObservableObject
+	public class TestCasesViewModel : DispatchedBindableBase
 	{
 		private readonly ObservableCollection<TestCaseViewModel> _allTests = new();
         private readonly FilteredCollectionView<TestCaseViewModel, (string, TestState)> _filteredTests;
@@ -53,7 +52,7 @@ namespace Xunit.Uno.Runner
                     _progressCancelToken = value;
                     RunAllTestsCommand.RaiseCanExecuteChanged();
                     RunFilteredTestsCommand.RaiseCanExecuteChanged();
-                    OnPropertyChanged(nameof(IsBusy));
+                    RaisePropertyChanged(nameof(IsBusy));
                 }
             }
         }
@@ -84,7 +83,7 @@ namespace Xunit.Uno.Runner
             {
                 ProgressCancelToken = token;
                 var tests = await _testCases.ToViewModels(token);
-                SynchronizationContext.Current.Post(_ => _allTests.ReplaceWith(tests), null);
+                await DispatchAsync(() => _allTests.ReplaceWith(tests));
                 TestCycleResult.UpdateCaption();
             }
             finally

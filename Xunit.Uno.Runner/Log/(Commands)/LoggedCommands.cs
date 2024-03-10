@@ -8,11 +8,13 @@ public class LoggedCommands : ICommands
 {
     private readonly ICommands _origin;
     private readonly ILog _log;
+    private readonly bool _fullLog;
 
-    public LoggedCommands(ICommands origin, ILog log)
+    public LoggedCommands(ICommands origin, ILog log, bool fullLog = true)
     {
         _origin = origin;
         _log = log;
+        _fullLog = fullLog;
     }
 
     public IAsyncCommand AsyncCommand(
@@ -24,7 +26,8 @@ public class LoggedCommands : ICommands
         return new LoggedAsyncCommand(
             _origin.AsyncCommand(execute, canExecute, forceExecution, name),
             _log,
-            name
+            name,
+            _fullLog
         );
     }
 
@@ -37,7 +40,8 @@ public class LoggedCommands : ICommands
         return new LoggedAsyncCommand<TParam>(
             _origin.AsyncCommand(execute, canExecute, forceExecution, name),
             _log,
-            name
+            name,
+            _fullLog
         );
     }
 
@@ -50,7 +54,8 @@ public class LoggedCommands : ICommands
         return new LoggedAsyncCommand<TParam>(
             _origin.AsyncCommand(execute, canExecute, forceExecution, name),
             _log,
-            name
+            name,
+            _fullLog
         );
     }
 
@@ -63,7 +68,8 @@ public class LoggedCommands : ICommands
         return new LoggedCommand(
             _origin.Command(execute, canExecute, forceExecution, name),
             _log,
-            name
+            name,
+            _fullLog
         );
     }
 
@@ -76,7 +82,8 @@ public class LoggedCommands : ICommands
         return new LoggedCommand(
             _origin.Command(execute, canExecute, forceExecution, name),
             _log,
-            name
+            name,
+            _fullLog
         );
     }
 }

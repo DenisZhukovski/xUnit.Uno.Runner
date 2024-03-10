@@ -1,48 +1,56 @@
-﻿<StackPanel
+﻿<Grid 
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:viewModels="clr-namespace:Xunit.Uno.Runner"
   xmlns:ux="clr-namespace:Xunit.Uno.Runner.UX"
-  x:Class="Xunit.Uno.Runner.TestCasesListItem"
-  Padding="0, 10" Margin="0" Spacing="5">
-  <StackPanel.Resources>
+  x:Class="Xunit.Uno.Runner.UX.TestCasesListItem"
+  Padding="0, 10"
+  Margin="0" 
+  RowSpacing="5">
+  <Grid.Resources>
     <ux:RunStatusToColorConverter x:Key="RunStatusToColorConverter"/>
     <ux:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-  </StackPanel.Resources>
-  <TextBlock
+  </Grid.Resources>
+  <Grid.RowDefinitions>
+    <RowDefinition Height="Auto"/>
+    <RowDefinition Height="Auto"/>
+  </Grid.RowDefinitions>
+  <TextBlock 
+    Grid.Row="0"
     Text="{Binding DisplayName}"
     Foreground="{Binding TestCycleResult.RunStatus, Converter={StaticResource RunStatusToColorConverter}}" />
-  <StackPanel Orientation="Horizontal" Spacing="5">
-    <TextBlock
-      Text="✔"
-      Foreground="{StaticResource VisualRunnerSuccessfulTestsColor}" />
-    <TextBlock
-      Text="{Binding TestCycleResult.Passed}"
-      Foreground="{StaticResource VisualRunnerSuccessfulTestsColor}"
-      Margin="0,0,15,0" />
 
-    <TextBlock
-      Text="⛔"
-      Foreground="{StaticResource VisualRunnerFailedTestsColor}" />
-    <TextBlock
-      Text="{Binding TestCycleResult.Failed}"
-      Foreground="{StaticResource VisualRunnerFailedTestsColor}"
-      Margin="0,0,15,0" />
+    <StackPanel 
+      Grid.Row="1"
+      Orientation="Horizontal" Spacing="5">
+      <TextBlock Text="✔" Foreground="{StaticResource VisualRunnerSuccessfulTestsColor}" />
+      <TextBlock
+        Text="{Binding TestCycleResult.Passed}"
+        Foreground="{StaticResource VisualRunnerSuccessfulTestsColor}"
+        Margin="0,0,15,0" />
 
-    <TextBlock
-      Text="⚠"
-      Foreground="{StaticResource VisualRunnerSkippedTestsColor}" />
-    <TextBlock
-      Text="{Binding TestCycleResult.Skipped}"
-      Foreground="{StaticResource VisualRunnerSkippedTestsColor}"
-      Margin="0,0,15,0" />
+      <TextBlock Text="⛔" Foreground="{StaticResource VisualRunnerFailedTestsColor}" />
+      <TextBlock 
+        Text="{Binding TestCycleResult.Failed}"
+        Foreground="{StaticResource VisualRunnerFailedTestsColor}" 
+        Margin="0,0,15,0" />
+`
+      <TextBlock Text="⚠" Foreground="{StaticResource VisualRunnerSkippedTestsColor}" />
+      <TextBlock 
+        Text="{Binding TestCycleResult.Skipped}"
+        Foreground="{StaticResource VisualRunnerSkippedTestsColor}"
+        Margin="0,0,15,0" />
 
-    <TextBlock
-      Text="🔷"
-      Foreground="{StaticResource VisualRunnerNotRunTestsColor}" />
-    <TextBlock
-      Text="{Binding TestCycleResult.NotRun}"
-      Foreground="{StaticResource VisualRunnerNotRunTestsColor}" />
-
-  </StackPanel>
-</StackPanel>
+      <TextBlock Text="🔷" Foreground="{StaticResource VisualRunnerNotRunTestsColor}" />
+      <TextBlock Text="{Binding TestCycleResult.NotRun}" Foreground="{StaticResource VisualRunnerNotRunTestsColor}" />
+                  
+    </StackPanel>
+    <ProgressRing
+      Grid.Row="0"
+      Grid.RowSpan="2"
+      IsActive="{Binding IsBusy}"
+      VerticalAlignment="Center"
+      HorizontalAlignment="Right"
+      Width="5"
+      Height="5" />
+</Grid>
