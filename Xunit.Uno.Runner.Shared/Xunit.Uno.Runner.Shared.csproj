@@ -11,7 +11,7 @@
     <None Update="AppHead.xaml.cs" DependentUpon="AppHead.xaml" />
   </ItemGroup>
 
-  <ItemGroup>
+  <!-- <ItemGroup>
     <PackageReference Include="Uno.Extensions.Navigation.WinUI" />
-  </ItemGroup>
+  </ItemGroup> -->
 </Project>

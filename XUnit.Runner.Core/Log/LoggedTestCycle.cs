@@ -42,6 +42,6 @@ public class LoggedTestCycle : ITestCycle
 
     private void OnTestFinished(ITestResult testResult)
     {
-        _log.Write("TestCycle", $"Test finished: {testResult.Message}");
+        _log.Write("TestCycle", $"Test finished: {testResult}");
     }
 }

@@ -1,6 +1,6 @@
-namespace Xunit.Uno.Runner;
+namespace Xunit.Uno.Runner.UX;
 
-public sealed partial class TestCasesListItem
+public sealed partial class TestCasesListItem : Grid
 {
     public TestCasesListItem()
     {

@@ -1,33 +1,50 @@
-using CommunityToolkit.Mvvm.ComponentModel;
+using System.Collections.ObjectModel;
 using XUnit.Runners.Core.Log;
 
 namespace Xunit.Uno.Runner;
 
-public class DiagnosticViewModel : ObservableObject, ILog
+public class DiagnosticViewModel : DispatchedBindableBase, ILog
 {
-    string _messages = string.Empty;
+    ObservableCollection<string> _messages = new ObservableCollection<string>();
     
-    public string Messages
+    public ObservableCollection<string> Messages
     {
         get => _messages;
-        set
-        {
-            SynchronizationContext.Current.Post(_ => SetProperty(ref _messages, value), null);
-        }
+        set => SetProperty(ref _messages, value);
     }
 
     public void Clear()
     {
-        Messages = string.Empty;
+        Messages.Clear();
+    }
+
+    public void Write(string message)
+    {
+        Write(string.Empty, message);
     }
 
     public void Write(string tag, string message)
     {
-        Messages += $"{message}{Environment.NewLine}{Environment.NewLine}";
+        DispatchAsync(() =>
+        {
+            lock (Messages)
+            {
+                Messages.Add(message);
+            }
+        }).FireAndForget();
     }
 
     public void Write(string tag, string message, Exception exception)
     {
-        Messages += $"{message}{Environment.NewLine}{exception.Message}{Environment.NewLine}{Environment.NewLine}";
+        DispatchAsync(() => 
+        {
+            lock (Messages)
+            {
+                Messages.Add(message);
+                Messages.Add(exception.Message);
+            }
+            
+        }).FireAndForget();
+       
     }
 }
