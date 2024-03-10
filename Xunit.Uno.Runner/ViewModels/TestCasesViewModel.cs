@@ -98,6 +98,11 @@ namespace Xunit.Uno.Runner
             try
             {
                 ProgressCancelToken = token;
+                foreach (var testCaseViewModel in _allTests)
+                {
+                    testCaseViewModel.TestResult.Clear();
+                }
+                TestCycleResult.UpdateCaption();
                 testCycle = _testCases.TestCycle;
                 testCycle.TestFinished += OnTestFinished;
                 await testCycle.RunAsync(

@@ -23,13 +23,18 @@ public class DiagnosticViewModel : DispatchedBindableBase, ILog
         Write(string.Empty, message);
     }
 
-    public void Write(string tag, string message)
+    public void Write(string tag, object message)
     {
+        if (message == null)
+        {
+            return;
+        }
+        
         DispatchAsync(() =>
         {
             lock (Messages)
             {
-                Messages.Add(message);
+                Messages.Add(message.ToString());
             }
         }).FireAndForget();
     }

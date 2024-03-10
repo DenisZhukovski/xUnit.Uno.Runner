@@ -16,9 +16,7 @@ namespace Xunit.Uno.Runner
         public TestResultViewModel(ITestCase testCase)
 		{
 			TestCase = testCase ?? throw new ArgumentNullException(nameof(testCase));
-            State = TestState.NotRun;
-            RunStatus = RunStatus.NotRun;
-            Message = "🔷 not run";
+            Clear();
 		}
 
 		public ITestCase TestCase { get; }
@@ -59,6 +57,13 @@ namespace Xunit.Uno.Runner
         {
             get => _state;
             private set => SetProperty(ref _state, value);
+        }
+
+        internal void Clear()
+        {
+            State = TestState.NotRun;
+            RunStatus = RunStatus.NotRun;
+            Message = "🔷 not run";
         }
         
         internal void UpdateTestState(ITestResult result)

@@ -6,10 +6,6 @@
       xmlns:ux="clr-namespace:Xunit.Uno.Runner.UX"
       x:Class="Xunit.Uno.Runner.MainPage"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-  <Page.Resources>
-    <ux:RunStatusToColorConverter x:Key="RunStatusToColorConverter"/>
-    <ux:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-  </Page.Resources>
   <StackPanel>
     <ui:NavigationBar
       Content="Test Runner"
@@ -24,9 +20,10 @@
       </Grid.RowDefinitions>
 
       <ListView Grid.Row="1"
-                Margin="0"
-                Padding="10, 0"
-                ItemsSource="{Binding TestAssemblies}">
+        Margin="0"
+        Padding="10, 0"
+        SelectionMode="Single"
+        ItemsSource="{Binding TestAssemblies}">
         <ListView.HeaderTemplate>
           <DataTemplate>
             <TextBlock Text="Test Assemblies:" FontWeight="Bold" />
@@ -39,9 +36,9 @@
         </ListView.ItemTemplate>
       </ListView>
       <!-- additional controls -->
-      <StackPanel 
+      <StackPanel
         Grid.Row="2"
-        Orientation="Horizontal" 
+        Orientation="Horizontal"
         HorizontalAlignment="Center"
         Spacing="5">
         <Button Content="Run All Tests" Command="{Binding RunEverythingCommand}" />
@@ -52,15 +49,16 @@
          Grid.Row="4"
          Margin="0"
          Padding="10, 0"
+         SelectionMode="None"
          ItemsSource="{Binding Diagnostic.Messages}">
         <ListView.HeaderTemplate>
           <DataTemplate>
-             <TextBlock Grid.Row="3" Text="Diagnostic Information:" FontWeight="Bold" />
+             <TextBlock Text="Diagnostic Information:" FontWeight="Bold" />
           </DataTemplate>
         </ListView.HeaderTemplate>
         <ListView.ItemTemplate>
           <DataTemplate>
-             <TextBlock Text="{Binding .}" />
+             <TextBlock Text="{Binding .}" Margin="0" />
           </DataTemplate>
         </ListView.ItemTemplate>
       </ListView>
