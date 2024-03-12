@@ -5,19 +5,15 @@ using Xunit.Uno.Runner.Extensions;
 
 namespace Xunit.Uno.Runner
 {
-	public class TestCasesViewModel : DispatchedBindableBase
+	public class TestCasesViewModel : UIBindableBase
 	{
 		private readonly ObservableCollection<TestCaseViewModel> _allTests = new();
-        private readonly FilteredCollectionView<TestCaseViewModel, (string, TestState)> _filteredTests;
+        private readonly IFilteredCollection<TestCaseViewModel> _filteredTests;
         private readonly ITestCases _testCases;
         readonly INavigator _navigation;
         private readonly ICommands _commands;
-
-        CancellationTokenSource? _filterCancellationTokenSource;
-		
-		string? _searchQuery;
-		
         private CancellationToken? _progressCancelToken;
+        private readonly ITestFilter _testFilter = new TestFilter();
         
         internal TestCasesViewModel(
             ITestCases testCases,
@@ -29,15 +25,9 @@ namespace Xunit.Uno.Runner
             _commands = commands.Cached();
 
             TestCycleResult = new TestCycleResultViewModel(_allTests);
-            _filteredTests = new FilteredCollectionView<TestCaseViewModel, (string, TestState)>(
-                _allTests,
-                IsTestFilterMatch,
-                (SearchQuery, TestCycleResult.ResultFilter),
-                new TestComparer()
-            );
-
-            _filteredTests.ItemChanged += (_, _) => TestCycleResult.UpdateCaption();
-            _filteredTests.CollectionChanged += (_, _) => TestCycleResult.UpdateCaption();
+            _filteredTests = new FilteredCollection<TestCaseViewModel>(_allTests).Delayed();
+            _filteredTests.List.CollectionChanged += (_, _) => TestCycleResult.UpdateCaption();
+            _filteredTests.Filter = _testFilter;
             
             InitCommand.Execute();
 		}
@@ -57,33 +47,35 @@ namespace Xunit.Uno.Runner
             }
         }
         
+        public bool IsBusy => ProgressCancelToken != null;
+        
         public string DisplayName => Path.GetFileNameWithoutExtension(_testCases.GroupName);
         
         public string SearchQuery
         {
-            get => _searchQuery ?? string.Empty;
+            get => _testFilter.Name;
             set
             {
-                if (SetProperty(ref _searchQuery, value))
+                if (_testFilter.Name !=  value)
                 {
-                    FilterAfterDelay();
+                    _testFilter.Name = value;
+                    _filteredTests.Filter = _testFilter;
                 }
             }
         }
         
         public TestCycleResultViewModel TestCycleResult { get; }
 
-        public IList<TestCaseViewModel> TestCases => _filteredTests;
+        public IList<TestCaseViewModel> TestCases => _filteredTests.List;
 
-        public bool IsBusy => ProgressCancelToken != null;
-        
         public IAsyncCommand InitCommand => _commands.AsyncCommand(async token =>
         {
             try
             {
                 ProgressCancelToken = token;
                 var tests = await _testCases.ToViewModels(token);
-                await DispatchAsync(() => _allTests.ReplaceWith(tests));
+                var orderedTests = tests.OrderBy(test => test.DisplayName);
+                await OnUIAsync(() => _allTests.ReplaceWith(orderedTests));
                 TestCycleResult.UpdateCaption();
             }
             finally
@@ -98,11 +90,7 @@ namespace Xunit.Uno.Runner
             try
             {
                 ProgressCancelToken = token;
-                foreach (var testCaseViewModel in _allTests)
-                {
-                    testCaseViewModel.TestResult.Clear();
-                }
-                TestCycleResult.UpdateCaption();
+                TestCycleResult.Clear();
                 testCycle = _testCases.TestCycle;
                 testCycle.TestFinished += OnTestFinished;
                 await testCycle.RunAsync(
@@ -121,12 +109,12 @@ namespace Xunit.Uno.Runner
 
         }, () => !IsBusy);
 
-        public IAsyncCommand RunFilteredTestsCommand => _commands.AsyncCommand(async (token) =>
+        public IAsyncCommand RunFilteredTestsCommand => _commands.AsyncCommand(async token =>
         {
             try
             {
                 ProgressCancelToken = token;
-                await _filteredTests.RunAsync();
+                await _filteredTests.List.RunAsync(token);
             }
             finally
             {
@@ -135,70 +123,20 @@ namespace Xunit.Uno.Runner
 
         }, () => !IsBusy);
 
-        public ICommand NavigateToResultCommand => _commands.AsyncCommand<TestCaseViewModel?>(async testCase =>
+        public ICommand NavigateToResultCommand => _commands.AsyncCommand<TestCaseViewModel?>(
+            async (testCase, token) =>
         {
             if (testCase != null)
             {
-                await testCase.RunAsync();
+                await testCase.RunAsync(token);
                 //await _navigation.NavigateAsync(PageType.TestResult, testCase.TestResult);
             }
         }, tc => !IsBusy);
 
+        
         private void OnTestFinished(ITestResult testResult)
         {
-            _allTests
-                .First(test => test.Equals(testResult))
-                .TestResult.UpdateTestState(testResult);
-            TestCycleResult.UpdateCaption();
+            TestCycleResult.UpdateWith(testResult);
         }
-        
-		void FilterAfterDelay()
-		{
-			_filterCancellationTokenSource?.Cancel();
-			_filterCancellationTokenSource = new CancellationTokenSource();
-
-			var token = _filterCancellationTokenSource.Token;
-
-			Task.Delay(500, token)
-				.ContinueWith(
-					x => { _filteredTests.FilterArgument = (SearchQuery, TestCycleResult.ResultFilter); },
-					token,
-					TaskContinuationOptions.None,
-					TaskScheduler.FromCurrentSynchronizationContext()
-                );
-		}
-
-		static bool IsTestFilterMatch(TestCaseViewModel test, (string SearchQuery, TestState ResultFilter) query)
-		{
-			if (test == null)
-				throw new ArgumentNullException(nameof(test));
-
-			var (pattern, state) = query;
-
-			TestState? requiredTestState = state switch
-			{
-				TestState.All => null,
-				TestState.Passed => TestState.Passed,
-				TestState.Failed => TestState.Failed,
-				TestState.Skipped => TestState.Skipped,
-				TestState.NotRun => TestState.NotRun,
-				_ => throw new ArgumentException(),
-			};
-
-            if (requiredTestState.HasValue && test.TestResult.State != requiredTestState.Value)
-            {
-                return false;
-            }
-
-			return
-				string.IsNullOrWhiteSpace(pattern) ||
-				test.DisplayName.IndexOf(pattern.Trim(), StringComparison.OrdinalIgnoreCase) >= 0;
-		}
-
-		class TestComparer : IComparer<TestCaseViewModel>
-		{
-			public int Compare(TestCaseViewModel? x, TestCaseViewModel? y) =>
-				string.Compare(x?.DisplayName, y?.DisplayName, StringComparison.OrdinalIgnoreCase);
-		}
     }
 }

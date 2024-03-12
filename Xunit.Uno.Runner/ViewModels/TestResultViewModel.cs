@@ -58,6 +58,19 @@ namespace Xunit.Uno.Runner
             get => _state;
             private set => SetProperty(ref _state, value);
         }
+        
+        public override bool Equals(object? obj)
+        {
+            return ReferenceEquals(this, obj)
+                   || (obj is TestState state && state == State)
+                   || (obj is RunStatus status && status == RunStatus)
+                   || (obj is string message && message == Message);
+        }
+
+        public override int GetHashCode()
+        {
+            return TestCase.GetHashCode();
+        }
 
         internal void Clear()
         {
@@ -96,5 +109,5 @@ namespace Xunit.Uno.Runner
                 RunStatus = RunStatus.NotRun;
             }
         }
-	}
+    }
 }

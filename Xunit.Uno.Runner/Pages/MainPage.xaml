@@ -6,7 +6,7 @@
       xmlns:ux="clr-namespace:Xunit.Uno.Runner.UX"
       x:Class="Xunit.Uno.Runner.MainPage"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-  <StackPanel>
+  <StackPanel MaxWidth="1000">
     <ui:NavigationBar
       Content="Test Runner"
       Style="{StaticResource NativeDefaultNavigationBar}"/>

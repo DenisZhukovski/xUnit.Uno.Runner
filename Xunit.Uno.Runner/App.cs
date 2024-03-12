@@ -1,6 +1,5 @@
 using Dotnet.Commands;
 using Microsoft.Extensions.Hosting;
-using Uno.Extensions;
 using XUnit.Runners.Core;
 
 namespace Xunit.Uno.Runner;
@@ -13,7 +12,7 @@ public class App : Application
     protected override async void OnLaunched(LaunchActivatedEventArgs args)
     {
 #if __IOS__ || __ANDROID__
-    FeatureConfiguration.Style.ConfigureNativeFrameNavigation();
+        FeatureConfiguration.Style.ConfigureNativeFrameNavigation();
 #endif
         var builder = this.CreateBuilder(args)
             .Configure(host => host

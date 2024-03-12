@@ -15,9 +15,15 @@ public static class AssemblyTestsExtensions
         );
     }
 
-    public static Task RunAsync(this IEnumerable<TestCaseViewModel> tests)
+    public static Task RunAsync(this IEnumerable<TestCaseViewModel> tests, CancellationToken token)
     {
-        return Task.CompletedTask;
+        var progress = new List<Task>();
+        foreach (var test in tests)
+        {
+            progress.Add(test.RunAsync(token));
+        }
+
+        return Task.WhenAll(progress);
     }
     
     public static Task RunAsync(
@@ -31,5 +37,13 @@ public static class AssemblyTestsExtensions
         }
 
         return Task.WhenAll(progress);
+    }
+    
+    public static void ClearResults(this IEnumerable<TestCaseViewModel> testCases)
+    {
+        foreach (var testCaseViewModel in testCases)
+        {
+            testCaseViewModel.TestResult.Clear();
+        }
     }
 }

@@ -4,18 +4,18 @@ using Microsoft.UI.Dispatching;
 
 namespace Xunit.Uno.Runner;
 
-public abstract class DispatchedBindableBase : INotifyPropertyChanged
+public abstract class UIBindableBase : INotifyPropertyChanged
 {
-    private DispatcherQueue? _dispatcher = null;
+    private DispatcherQueue? _dispatcher;
 
-    // Insert variables below here
-    protected DispatcherQueue Dispatcher => _dispatcher ??= DispatcherQueue.GetForCurrentThread();
+    protected DispatcherQueue UIThread => _dispatcher ??= DispatcherQueue.GetForCurrentThread();
 
-    // Insert variables below here
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    // Insert SetProperty below here
-    protected virtual bool SetProperty<T>(ref T backingVariable, T value, [CallerMemberName] string? propertyName = null)
+    protected virtual bool SetProperty<T>(
+        ref T backingVariable,
+        T value,
+        [CallerMemberName] string? propertyName = null)
     {
         if (EqualityComparer<T>.Default.Equals(backingVariable, value)) return false;
 
@@ -25,22 +25,20 @@ public abstract class DispatchedBindableBase : INotifyPropertyChanged
         return true;
     }
 
-    // Insert RaisePropertyChanged below here
     protected void RaisePropertyChanged([CallerMemberName] string? propertyName = null)
     {
-        DispatchAsync(
+        OnUIAsync(
             () => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName))
         ).FireAndForget();
     }
 
-    // Insert DispatchAsync below here
-    protected async Task DispatchAsync(DispatcherQueueHandler callback)
+    protected async Task OnUIAsync(DispatcherQueueHandler callback)
     {
         var hasThreadAccess =
     #if __WASM__
         true;
     #else
-        Dispatcher.HasThreadAccess;
+        UIThread.HasThreadAccess;
     #endif
 
         if (hasThreadAccess)
@@ -53,7 +51,7 @@ public abstract class DispatchedBindableBase : INotifyPropertyChanged
             int count = 20;
             while (count > 0)
             {
-                var enqueue = Dispatcher.TryEnqueue(() =>
+                var enqueue = UIThread.TryEnqueue(() =>
                 {
                     callback();
                     completion.SetResult();
