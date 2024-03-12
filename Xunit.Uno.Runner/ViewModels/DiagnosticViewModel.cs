@@ -3,7 +3,7 @@ using XUnit.Runners.Core.Log;
 
 namespace Xunit.Uno.Runner;
 
-public class DiagnosticViewModel : DispatchedBindableBase, ILog
+public class DiagnosticViewModel : UIBindableBase, ILog
 {
     ObservableCollection<string> _messages = new ObservableCollection<string>();
     
@@ -23,20 +23,25 @@ public class DiagnosticViewModel : DispatchedBindableBase, ILog
         Write(string.Empty, message);
     }
 
-    public void Write(string tag, string message)
+    public void Write(string tag, object message)
     {
-        DispatchAsync(() =>
+        if (message == null)
+        {
+            return;
+        }
+        
+        OnUIAsync(() =>
         {
             lock (Messages)
             {
-                Messages.Add(message);
+                Messages.Add(message.ToString());
             }
         }).FireAndForget();
     }
 
     public void Write(string tag, string message, Exception exception)
     {
-        DispatchAsync(() => 
+        OnUIAsync(() => 
         {
             lock (Messages)
             {

@@ -6,8 +6,6 @@ namespace Xunit.Uno.Runner
 {
 	public class TestCaseViewModel : ObservableObject
 	{
-		TestResultViewModel _testResult;
-
 		internal TestCaseViewModel(string assemblyFileName, ITestCase testCase)
 		{
 			AssemblyFileName = assemblyFileName ?? throw new ArgumentNullException(nameof(assemblyFileName));
@@ -21,13 +19,9 @@ namespace Xunit.Uno.Runner
 
 		public ITestCase TestCase { get; }
 
-		public TestResultViewModel TestResult
-		{
-			get => _testResult;
-			private set => SetProperty(ref _testResult, value);
-		}
+		public TestResultViewModel TestResult { get; }
 
-        public Task RunAsync()
+        public Task RunAsync(CancellationToken token)
         {
             return Task.CompletedTask;
         }
@@ -36,12 +30,25 @@ namespace Xunit.Uno.Runner
         {
             return ReferenceEquals(this, obj)
                 || (obj is ITestResult testResult && TestCase.Equals(testResult.Case))
-                || TestCase.Equals(obj);
+                || TestCase.Equals(obj)
+                || obj is ITestFilter filter && Equals(filter);
         }
 
         public override int GetHashCode()
         {
             return TestCase.GetHashCode();
+        }
+        
+        private bool Equals(ITestFilter filter)
+        {
+            if (filter.State != TestState.All && !TestResult.Equals(filter.State))
+            {
+                return false;
+            }
+
+            return
+                string.IsNullOrWhiteSpace(filter.Name) ||
+                DisplayName.Contains(filter.Name.Trim(), StringComparison.OrdinalIgnoreCase);
         }
     }
 }

@@ -47,7 +47,7 @@ namespace Xunit.Uno.Runner
         }
 
         public IAsyncCommand CreditsCommand => _commands.AsyncCommand(
-            () => Task.CompletedTask// _navigator.NavigateAsync(PageType.Credits)
+            () => _navigator.NavigateViewAsync<CreditsPage>(this)
         );
         
 		public IAsyncCommand RunEverythingCommand => _commands.AsyncCommand(

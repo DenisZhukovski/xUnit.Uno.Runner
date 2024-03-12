@@ -1,6 +1,5 @@
 using Dotnet.Commands;
 using Microsoft.Extensions.Hosting;
-using Uno.Extensions;
 using XUnit.Runners.Core;
 
 namespace Xunit.Uno.Runner;
@@ -12,6 +11,9 @@ public class App : Application
 
     protected override async void OnLaunched(LaunchActivatedEventArgs args)
     {
+#if __IOS__ || __ANDROID__
+        FeatureConfiguration.Style.ConfigureNativeFrameNavigation();
+#endif
         var builder = this.CreateBuilder(args)
             .Configure(host => host
 #if DEBUG
@@ -45,7 +47,8 @@ public class App : Application
     private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
     {
         views.Register(
-            new ViewMap<MainPage, MainViewModel>()
+            new ViewMap<MainPage, MainViewModel>(),
+            new ViewMap<CreditsPage>()
         );
     }
 }

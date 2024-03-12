@@ -16,9 +16,7 @@ namespace Xunit.Uno.Runner
         public TestResultViewModel(ITestCase testCase)
 		{
 			TestCase = testCase ?? throw new ArgumentNullException(nameof(testCase));
-            State = TestState.NotRun;
-            RunStatus = RunStatus.NotRun;
-            Message = "🔷 not run";
+            Clear();
 		}
 
 		public ITestCase TestCase { get; }
@@ -61,6 +59,26 @@ namespace Xunit.Uno.Runner
             private set => SetProperty(ref _state, value);
         }
         
+        public override bool Equals(object? obj)
+        {
+            return ReferenceEquals(this, obj)
+                   || (obj is TestState state && state == State)
+                   || (obj is RunStatus status && status == RunStatus)
+                   || (obj is string message && message == Message);
+        }
+
+        public override int GetHashCode()
+        {
+            return TestCase.GetHashCode();
+        }
+
+        internal void Clear()
+        {
+            State = TestState.NotRun;
+            RunStatus = RunStatus.NotRun;
+            Message = "🔷 not run";
+        }
+        
         internal void UpdateTestState(ITestResult result)
         {
             Output = result.Message.Output ?? string.Empty;
@@ -91,5 +109,5 @@ namespace Xunit.Uno.Runner
                 RunStatus = RunStatus.NotRun;
             }
         }
-	}
+    }
 }

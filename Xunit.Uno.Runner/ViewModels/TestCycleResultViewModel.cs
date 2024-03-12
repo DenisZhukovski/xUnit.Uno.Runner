@@ -1,9 +1,11 @@
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using XUnit.Runners.Core;
+using Xunit.Uno.Runner.Extensions;
 
 namespace Xunit.Uno.Runner;
 
-public class TestCycleResultViewModel : DispatchedBindableBase
+public class TestCycleResultViewModel : UIBindableBase
 {
     private readonly ObservableCollection<TestCaseViewModel> _allTests;
     TestState _result = TestState.NotRun;
@@ -72,6 +74,21 @@ public class TestCycleResultViewModel : DispatchedBindableBase
     {
         get => _detailText ?? string.Empty;
         private set => SetProperty(ref _detailText, value);
+    }
+
+    public void Clear()
+    {
+        _allTests.ClearResults();
+        UpdateCaption();
+    }
+
+    [SuppressMessage("ReSharper", "SuspiciousTypeConversion.Global")]
+    public void UpdateWith(ITestResult testResult)
+    {
+        _allTests
+            .First(test => test.Equals(testResult))
+            .TestResult.UpdateTestState(testResult);
+        UpdateCaption();
     }
     
     public void UpdateCaption()
