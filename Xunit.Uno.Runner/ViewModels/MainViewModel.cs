@@ -55,7 +55,6 @@ namespace Xunit.Uno.Runner
             {
                 try
                 {
-                    //if (Progress != null)
                     Progress = token;
                     Diagnostic.Clear();
                     Diagnostic.Write("Run Everything");

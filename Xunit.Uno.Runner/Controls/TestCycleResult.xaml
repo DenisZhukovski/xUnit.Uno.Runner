@@ -1,0 +1,28 @@
+﻿<StackPanel
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  x:Class="Xunit.Uno.Runner.UX.TestCycleResult"
+  Orientation="Horizontal" Spacing="5">
+  <TextBlock Text="✔" Foreground="{StaticResource VisualRunnerSuccessfulTestsColor}" />
+  <TextBlock
+    Text="{Binding TestCycleResult.Passed}"
+    Foreground="{StaticResource VisualRunnerSuccessfulTestsColor}"
+    Margin="0,0,15,0" />
+
+  <TextBlock Text="⛔" Foreground="{StaticResource VisualRunnerFailedTestsColor}" />
+  <TextBlock
+    Text="{Binding TestCycleResult.Failed}"
+    Foreground="{StaticResource VisualRunnerFailedTestsColor}"
+    Margin="0,0,15,0" />
+
+  <TextBlock Text="⚠" Foreground="{StaticResource VisualRunnerSkippedTestsColor}" />
+  <TextBlock
+    Text="{Binding TestCycleResult.Skipped}"
+    Foreground="{StaticResource VisualRunnerSkippedTestsColor}"
+    Margin="0,0,15,0" />
+
+  <TextBlock Text="🔷" Foreground="{StaticResource VisualRunnerNotRunTestsColor}" />
+  <TextBlock
+    Text="{Binding TestCycleResult.NotRun}"
+    Foreground="{StaticResource VisualRunnerNotRunTestsColor}" />
+</StackPanel>

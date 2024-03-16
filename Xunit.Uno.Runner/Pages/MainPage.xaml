@@ -24,9 +24,9 @@
        x:Name="AllTestsList"
        Margin="0"
        Padding="10, 0"
-       SelectionMode="Single"
+       ItemsSource="{Binding AllTests}"
        SelectionChanged="OnSelectionChanged"
-       ItemsSource="{Binding AllTests}">
+       SelectionMode="Single">
        <ListView.HeaderTemplate>
          <DataTemplate>
            <TextBlock Text="Test Assemblies:" FontWeight="Bold" />

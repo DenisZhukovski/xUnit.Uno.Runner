@@ -17,38 +17,13 @@
     Grid.Row="0"
     Text="{Binding DisplayName}"
     Foreground="{Binding TestCycleResult.RunStatus, Converter={StaticResource RunStatusToColorConverter}}" />
-
-    <StackPanel
-      Grid.Row="1"
-      Orientation="Horizontal" Spacing="5">
-      <TextBlock Text="✔" Foreground="{StaticResource VisualRunnerSuccessfulTestsColor}" />
-      <TextBlock
-        Text="{Binding TestCycleResult.Passed}"
-        Foreground="{StaticResource VisualRunnerSuccessfulTestsColor}"
-        Margin="0,0,15,0" />
-
-      <TextBlock Text="⛔" Foreground="{StaticResource VisualRunnerFailedTestsColor}" />
-      <TextBlock
-        Text="{Binding TestCycleResult.Failed}"
-        Foreground="{StaticResource VisualRunnerFailedTestsColor}"
-        Margin="0,0,15,0" />
-
-      <TextBlock Text="⚠" Foreground="{StaticResource VisualRunnerSkippedTestsColor}" />
-      <TextBlock
-        Text="{Binding TestCycleResult.Skipped}"
-        Foreground="{StaticResource VisualRunnerSkippedTestsColor}"
-        Margin="0,0,15,0" />
-
-      <TextBlock Text="🔷" Foreground="{StaticResource VisualRunnerNotRunTestsColor}" />
-      <TextBlock Text="{Binding TestCycleResult.NotRun}" Foreground="{StaticResource VisualRunnerNotRunTestsColor}" />
-
-    </StackPanel>
-    <ProgressRing
-      Grid.Row="0"
-      Grid.RowSpan="2"
-      IsActive="{Binding IsBusy}"
-      VerticalAlignment="Center"
-      HorizontalAlignment="Right"
-      Width="5"
-      Height="5" />
+  <ux:TestCycleResult Grid.Row="1" />
+  <ProgressRing
+    Grid.Row="0"
+    Grid.RowSpan="2"
+    IsActive="{Binding IsBusy}"
+    VerticalAlignment="Center"
+    HorizontalAlignment="Right"
+    Width="5"
+    Height="5" />
 </Grid>

@@ -37,7 +37,10 @@ public sealed partial class MainPage : Page
 
     private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        (DataContext as MainViewModel).TestCasesCommand.Execute(e.AddedItems.First());
-        AllTestsList.SelectedItem = null;
+        if (e.AddedItems.Any())
+        {
+            (DataContext as MainViewModel).TestCasesCommand.Execute(e.AddedItems.First());
+        }
+        AllTestsList.SelectedItems.Clear();
     }
 }

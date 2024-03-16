@@ -1,10 +1,9 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Xunit.Abstractions;
+﻿using Xunit.Abstractions;
 using XUnit.Runners.Core;
 
 namespace Xunit.Uno.Runner
 {
-	public class TestCaseViewModel : ObservableObject
+	public class TestCaseViewModel
 	{
 		internal TestCaseViewModel(string assemblyFileName, ITestCase testCase)
 		{

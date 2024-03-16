@@ -1,10 +1,9 @@
-using CommunityToolkit.Mvvm.ComponentModel;
 using Xunit.Abstractions;
 using XUnit.Runners.Core;
 
 namespace Xunit.Uno.Runner
 {
-	public class TestResultViewModel : ObservableObject
+	public class TestResultViewModel : UIBindableBase
 	{
 		private TimeSpan _duration;
 		private string? _message;
@@ -44,8 +43,6 @@ namespace Xunit.Uno.Runner
 			get => _stackTrace;
 			set => SetProperty(ref _stackTrace, value);
 		}
-
-		public bool HasOutput => !string.IsNullOrWhiteSpace(Output);
 
         public string? Output
         {
