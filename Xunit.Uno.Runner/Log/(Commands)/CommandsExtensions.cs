@@ -5,8 +5,8 @@ namespace Xunit.Uno.Runner;
 
 public static class CommandsExtensions
 {
-    public static ICommands Logged(this ICommands commands, ILog logger, bool fullLog = true)
+    public static ICommands Logged(this ICommands commands, ILogger logger)
     {
-        return new LoggedCommands(commands, logger, fullLog);
+        return new LoggedCommands(commands, logger);
     }
 }

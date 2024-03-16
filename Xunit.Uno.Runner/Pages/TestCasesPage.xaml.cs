@@ -1,8 +1,8 @@
 ﻿namespace Xunit.Uno.Runner;
 
-public partial class CreditsPage : Page
+public partial class TestCasesPage : Page
 {
-    public CreditsPage()
+    public TestCasesPage()
     {
         InitializeComponent();
     }

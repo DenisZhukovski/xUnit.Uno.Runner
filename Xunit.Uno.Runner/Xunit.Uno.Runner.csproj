@@ -77,10 +77,4 @@
     <ProjectReference Include="..\XUnit.Runner.Core\XUnit.Runner.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="Mono.Android">
-      <HintPath>..\..\..\..\..\..\usr\local\share\dotnet\packs\Microsoft.Android.Ref.34\34.0.79\ref\net8.0\Mono.Android.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>

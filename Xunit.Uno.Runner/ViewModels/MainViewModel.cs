@@ -12,77 +12,78 @@ namespace Xunit.Uno.Runner
         private readonly INavigator _navigator;
         private readonly ITestScanner _testsScanner;
 
-        private CancellationToken? _progressCancelToken;
+        private CancellationToken? _progress;
         private readonly ICommands _commands;
-        private ObservableCollection<TestCasesViewModel> _testAssemblies = new();
+        private ObservableCollection<TestCasesViewModel> _allTests = new();
 
         public MainViewModel(INavigator navigator, ITestScanner testsScanner, ICommands commands)
 		{
             _navigator = navigator;
             _testsScanner = testsScanner;
-            _commands = commands.Cached().Logged(Diagnostic, false);
+            _commands = commands.Cached().Logged(Diagnostic);
 		}
 
-        private CancellationToken? ProgressCancelToken
+        private CancellationToken? Progress
         {
-            get => _progressCancelToken;
+            get => _progress;
             set
             {
-                if (_progressCancelToken != value)
+                if (_progress != value)
                 {
-                    _progressCancelToken = value;
-                    RunEverythingCommand.RaiseCanExecuteChanged();
+                    _progress = value;
+                    RunAllCommand.RaiseCanExecuteChanged();
                 }
             }
         }
 
         public DiagnosticViewModel Diagnostic { get; } = new();
         
-        public bool IsBusy => ProgressCancelToken != null;
+        public bool IsBusy => Progress != null;
 
-        public ObservableCollection<TestCasesViewModel> TestAssemblies
+        public ObservableCollection<TestCasesViewModel> AllTests
         {
-            get => _testAssemblies;
-            private set => SetProperty(ref _testAssemblies, value);
+            get => _allTests;
+            private set => SetProperty(ref _allTests, value);
         }
 
         public IAsyncCommand CreditsCommand => _commands.AsyncCommand(
             () => _navigator.NavigateViewAsync<CreditsPage>(this)
         );
         
-		public IAsyncCommand RunEverythingCommand => _commands.AsyncCommand(
+		public IAsyncCommand RunAllCommand => _commands.AsyncCommand(
             async token =>
             {
                 try
                 {
-                    ProgressCancelToken = token;
+                    //if (Progress != null)
+                    Progress = token;
                     Diagnostic.Clear();
                     Diagnostic.Write("Run Everything");
-                    await TestAssemblies.RunAsync(token);
+                    await AllTests.RunAsync(token);
                 }
                 finally
                 {
-                    ProgressCancelToken = null;
+                    Progress = null;
                 }
             },
             () => !IsBusy
         );
 
-        public ICommand NavigateToTestAssemblyCommand => _commands.AsyncCommand<TestCasesViewModel?>(async viewModel =>
+        public ICommand TestCasesCommand => _commands.AsyncCommand<TestCasesViewModel?>(async viewModel =>
         {
             if (viewModel != null)
             {
-               // await _navigator.NavigateAsync(PageType.AssemblyTestList, viewModel);
+               await _navigator.NavigateViewAsync<TestCasesPage>(this, data: viewModel);
             }
            
         });
 
-        public IAsyncCommand ScanAssembliesForTests => _commands.AsyncCommand(async token =>
+        public IAsyncCommand ScanForTestsCommand => _commands.AsyncCommand(async token =>
         {
             try
             {
-                ProgressCancelToken = token;
-                TestAssemblies = await _testsScanner
+                Progress = token;
+                AllTests = await _testsScanner
                     .Logged(Diagnostic)
                     .ToViewModels(
                         _navigator,
@@ -92,7 +93,7 @@ namespace Xunit.Uno.Runner
             }
             finally
             {
-                ProgressCancelToken = null;
+                Progress = null;
             }
         });
         
@@ -100,7 +101,7 @@ namespace Xunit.Uno.Runner
         {
             if (e.NavigationMode == NavigationMode.New)
             {
-                ScanAssembliesForTests.Execute();
+                ScanForTestsCommand.Execute();
             }
         }
 

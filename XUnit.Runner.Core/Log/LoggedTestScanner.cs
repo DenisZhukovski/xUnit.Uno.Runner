@@ -1,11 +1,13 @@
+using Microsoft.Extensions.Logging;
+
 namespace XUnit.Runners.Core.Log;
 
 public class LoggedTestScanner : ITestScanner
 {
     private readonly ITestScanner _origin;
-    private readonly ILog _log;
+    private readonly ILogger _log;
 
-    public LoggedTestScanner(ITestScanner origin, ILog log)
+    public LoggedTestScanner(ITestScanner origin, ILogger log)
     {
         _origin = origin;
         _log = log;

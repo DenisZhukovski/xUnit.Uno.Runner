@@ -2,66 +2,52 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:ui="clr-namespace:Uno.Toolkit.UI;assembly=Uno.Toolkit.WinUI"
-      xmlns:viewModels="clr-namespace:Xunit.Uno.Runner"
+      xmlns:viewModels="clr-namespace:Xunit.Uno.Runner;assembly=Xunit.Uno.Runner"
       xmlns:ux="clr-namespace:Xunit.Uno.Runner.UX"
       x:Class="Xunit.Uno.Runner.MainPage"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-  <StackPanel MaxWidth="1000">
-    <ui:NavigationBar
-      Content="Test Runner"
-      Style="{StaticResource NativeDefaultNavigationBar}"/>
-    <Grid RowSpacing="10" Padding="0">
-      <Grid.RowDefinitions>
-        <RowDefinition Height="Auto" />
-        <RowDefinition />
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="Auto"/>
-        <RowDefinition />
-      </Grid.RowDefinitions>
-
-      <ListView Grid.Row="1"
-        Margin="0"
-        Padding="10, 0"
-        SelectionMode="Single"
-        ItemsSource="{Binding TestAssemblies}">
-        <ListView.HeaderTemplate>
-          <DataTemplate>
-            <TextBlock Text="Test Assemblies:" FontWeight="Bold" />
-          </DataTemplate>
-        </ListView.HeaderTemplate>
-        <ListView.ItemTemplate>
-          <DataTemplate x:DataType="viewModels:TestCasesViewModel">
-            <ux:TestCasesListItem/>
-          </DataTemplate>
-        </ListView.ItemTemplate>
-      </ListView>
-      <!-- additional controls -->
-      <StackPanel
-        Grid.Row="2"
-        Orientation="Horizontal"
-        HorizontalAlignment="Center"
-        Spacing="5">
-        <Button Content="Run All Tests" Command="{Binding RunEverythingCommand}" />
-        <Button Content="Credits" Command="{Binding CreditsCommand}" />
-      </StackPanel>
-      <!-- additional output -->
-      <ListView
-         Grid.Row="4"
-         Margin="0"
-         Padding="10, 0"
-         SelectionMode="None"
-         ItemsSource="{Binding Diagnostic.Messages}">
-        <ListView.HeaderTemplate>
-          <DataTemplate>
-             <TextBlock Text="Diagnostic Information:" FontWeight="Bold" />
-          </DataTemplate>
-        </ListView.HeaderTemplate>
-        <ListView.ItemTemplate>
-          <DataTemplate>
-             <TextBlock Text="{Binding .}" Margin="0" />
-          </DataTemplate>
-        </ListView.ItemTemplate>
-      </ListView>
-    </Grid>
-  </StackPanel>
+   <Grid RowDefinitions="Auto, *, Auto" MaxWidth="1000">
+     <ui:NavigationBar
+       Style="{StaticResource NativeDefaultNavigationBar}"
+       MainCommandMode="Action"
+       Content="Test Runner">
+       <ui:NavigationBar.MainCommand>
+         <AppBarButton Command="{Binding CreditsCommand}">
+           <AppBarButton.Icon>
+             <BitmapIcon UriSource="ms-appx:///Xunit.Uno.Runner/Assets/Icons/xunit.png" />
+           </AppBarButton.Icon>
+         </AppBarButton>
+       </ui:NavigationBar.MainCommand>
+     </ui:NavigationBar>
+     <ListView
+       Grid.Row="1"
+       x:Name="AllTestsList"
+       Margin="0"
+       Padding="10, 0"
+       SelectionMode="Single"
+       SelectionChanged="OnSelectionChanged"
+       ItemsSource="{Binding AllTests}">
+       <ListView.HeaderTemplate>
+         <DataTemplate>
+           <TextBlock Text="Test Assemblies:" FontWeight="Bold" />
+         </DataTemplate>
+       </ListView.HeaderTemplate>
+       <ListView.ItemTemplate>
+         <DataTemplate x:DataType="viewModels:TestCasesViewModel">
+           <ux:TestCasesListItem/>
+         </DataTemplate>
+       </ListView.ItemTemplate>
+       <ListView.FooterTemplate>
+         <DataTemplate>
+           <ux:Diagnostics/>
+         </DataTemplate>
+       </ListView.FooterTemplate>
+     </ListView>
+     <Button
+       Grid.Row="2"
+       HorizontalAlignment="Stretch"
+       Margin="20, 10"
+       Content="Run"
+       Command="{Binding RunAllCommand}" />
+   </Grid>
 </Page>

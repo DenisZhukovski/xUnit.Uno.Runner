@@ -34,4 +34,10 @@ public sealed partial class MainPage : Page
             navigationAware.OnNavigatedFrom(e);
         }
     }
+
+    private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        (DataContext as MainViewModel).TestCasesCommand.Execute(e.AddedItems.First());
+        AllTestsList.SelectedItem = null;
+    }
 }
