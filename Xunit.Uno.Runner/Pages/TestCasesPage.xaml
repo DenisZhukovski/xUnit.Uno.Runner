@@ -3,7 +3,6 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:ui="clr-namespace:Uno.Toolkit.UI;assembly=Uno.Toolkit.WinUI"
       xmlns:ux="clr-namespace:Xunit.Uno.Runner.UX"
-      xmlns:system="clr-namespace:System;assembly=System.Runtime"
       xmlns:runner="clr-namespace:Xunit.Uno.Runner"
       x:Class="Xunit.Uno.Runner.TestCasesPage"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -11,66 +10,65 @@
     <ux:RunStatusToColorConverter x:Key="RunStatusToColorConverter"/>
     <ux:CountToVisibilityConverter x:Key="CountToVisibilityConverter"/>
   </Page.Resources>
-  <Grid RowDefinitions="Auto, Auto, *, Auto">
+  <Grid RowDefinitions="Auto, Auto, Auto, *, Auto">
     <ui:NavigationBar
       Content="{Binding DisplayName}"
       Style="{StaticResource NativeDefaultNavigationBar}"/>
-    <StackPanel
-        Grid.Row="1"
-        Padding="20, 0, 20, 10" Spacing="10">
-        <TextBlock Text="Tests:" FontWeight="Bold" />
-        <Grid ColumnSpacing="10" ColumnDefinitions="*,Auto" RowDefinitions="Auto">
-          <TextBox PlaceholderText="filter"
-                   Text="{Binding SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-          <ComboBox
-            Grid.Column="1"
-            SelectedItem="{Binding StateFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-            Width="130">
-            <system:String>All</system:String>
-            <system:String>Passed</system:String>
-            <system:String>Failed</system:String>
-            <system:String>Skipped</system:String>
-            <system:String>NotRun</system:String>
-          </ComboBox>
-
-        </Grid>
-    </StackPanel>
-    <TextBlock
+    <Grid
+      Grid.Row="1"
+      Padding="20, 0, 20, 10"
+      RowSpacing="10"
+      ColumnSpacing="10" ColumnDefinitions="*,Auto" RowDefinitions="Auto">
+      <TextBox
+        PlaceholderText="filter"
+        Text="{Binding Filter.SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+      <ComboBox
+        Grid.Column="1"
+        SelectionChanged="Selector_OnSelectionChanged"
+        ItemsSource="{Binding Filter.States}"
+        SelectedItem="{Binding Filter.StateFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+        Width="130"/>
+    </Grid>
+    <Grid
       Grid.Row="2"
+      Padding="20, 0, 20, 10">
+      <ux:TestCycleResult HorizontalAlignment="Center" />
+      <ProgressRing
+        IsActive="{Binding IsBusy}"
+        VerticalAlignment="Center"
+        HorizontalAlignment="Right"
+        Width="5"
+        Height="5" />
+    </Grid>
+    <TextBlock
+      Grid.Row="3"
       Text="No tests to display"
-      HorizontalAlignment="Stretch"
-      VerticalAlignment="Stretch"
+      HorizontalAlignment="Center"
+      VerticalAlignment="Center"
       HorizontalTextAlignment="Center"
       Visibility="{Binding TestCases.Count, Converter={StaticResource CountToVisibilityConverter}, ConverterParameter='Inverse'}" />
     <ListView
-      Grid.Row="2"
-      ItemsSource="{Binding TestCases}"
-      SelectionMode="Single">
+      Grid.Row="3"
+      SelectionMode="None"
+      IsItemClickEnabled="True"
+      ItemClickCommand="{Binding NavigateToResultCommand}"
+      ItemsSource="{Binding TestCases}">
       <ListView.ItemTemplate>
         <DataTemplate x:DataType="runner:TestCaseViewModel">
           <StackPanel Padding="20,10" Spacing="5">
-            <TextBlock Text="{Binding DisplayName}" />
             <TextBlock
-              Text="{Binding Message}"
-              Foreground="{Binding RunStatus, Converter={StaticResource RunStatusToColorConverter}}" />
+              Text="{Binding DisplayName}"
+              Foreground="{Binding TestResult.RunStatus, Converter={StaticResource RunStatusToColorConverter}}" />
+            <TextBlock
+              Text="{Binding TestResult.Message}"
+              Foreground="{Binding TestResult.RunStatus, Converter={StaticResource RunStatusToColorConverter}}" />
           </StackPanel>
         </DataTemplate>
       </ListView.ItemTemplate>
     </ListView>
-
-    <!-- busy indicator -->
-    <StackPanel
-      Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"
-      Background="#CCFFFFFF"
-      IsHitTestVisible="False"
-      VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="20">
-      <TextBlock Text="Running..." />
-      <ProgressRing IsActive="{Binding IsBusy}" />
-    </StackPanel>
-
-
     <Button
-      Grid.Row="3"
+      x:Name="PrimaryButton"
+      Grid.Row="4"
       Margin="20, 10"
       HorizontalAlignment="Stretch"
       VerticalAlignment="Bottom"

@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
+using Xunit.Abstractions;
 using XUnit.Runners.Core;
 using Xunit.Uno.Runner.Extensions;
 
@@ -79,6 +80,14 @@ public class TestCycleResultViewModel : UIBindableBase
     public void Clear()
     {
         _allTests.ClearResults();
+        UpdateCaption();
+    }
+    
+    public void Clear(IReadOnlyList<ITestCase> testCasesToClear)
+    {
+        _allTests
+            .Where(tc => testCasesToClear.Contains(tc.TestCase))
+            .ClearResults();
         UpdateCaption();
     }
 

@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using Dotnet.Commands;
+using Xunit.Abstractions;
 using XUnit.Runners.Core;
 using Xunit.Uno.Runner.Extensions;
 
@@ -13,7 +14,7 @@ namespace Xunit.Uno.Runner
         readonly INavigator _navigation;
         private readonly ICommands _commands;
         private CancellationToken? _progress;
-        private readonly ITestFilter _testFilter = new TestFilter();
+        
 
         internal TestCasesViewModel(
             ITestCases testCases,
@@ -27,8 +28,7 @@ namespace Xunit.Uno.Runner
             TestCycleResult = new TestCycleResultViewModel(_allTests);
             _filteredTests = new FilteredCollection<TestCaseViewModel>(_allTests).Delayed();
             _filteredTests.List.CollectionChanged += (_, _) => TestCycleResult.UpdateCaption();
-            _filteredTests.Filter = _testFilter;
-            
+            Filter = new TestsFilterViewModel(_filteredTests);
             InitCommand.Execute();
 		}
 
@@ -50,34 +50,10 @@ namespace Xunit.Uno.Runner
         
         public string DisplayName => Path.GetFileNameWithoutExtension(_testCases.GroupName);
         
-        public string SearchQuery
-        {
-            get => _testFilter.Name;
-            set
-            {
-                if (_testFilter.Name !=  value)
-                {
-                    _testFilter.Name = value;
-                    _filteredTests.Filter = _testFilter;
-                }
-            }
-        }
-        
-        public string StateFilter
-        {
-            get => _testFilter.State.ToString();
-            set
-            {
-                if (_testFilter.State.ToString() !=  value)
-                {
-                    _testFilter.State = Enum.Parse<TestState>(value);
-                    _filteredTests.Filter = _testFilter;
-                }
-            }
-        }
-        
         public TestCycleResultViewModel TestCycleResult { get; }
 
+        public TestsFilterViewModel Filter { get; }
+        
         public IList<TestCaseViewModel> TestCases => _filteredTests.List;
 
         public IAsyncCommand InitCommand => _commands.AsyncCommand(async token =>
@@ -96,17 +72,37 @@ namespace Xunit.Uno.Runner
             }
         });
         
-        public IAsyncCommand RunAllTestsCommand => _commands.AsyncCommand(async token =>
+        public IAsyncCommand RunAllTestsCommand => _commands.AsyncCommand(
+            token => RunTestCycle(
+                TestCases.Select(tc => tc.TestCase).ToList(),
+                token
+            ),
+            () => !IsBusy
+        );
+        
+        public ICommand NavigateToResultCommand => _commands.AsyncCommand<TestCaseViewModel?>(
+            async (testCase, token) =>
+        {
+            if (testCase != null)
+            {
+                await RunTestCycle(new[] { testCase.TestCase }, token);
+                await _navigation.NavigateViewAsync<TestResultPage>(this, data: testCase);
+            }
+        }, tc => !IsBusy);
+
+        private async Task RunTestCycle(
+            IReadOnlyList<ITestCase> testCases,
+            CancellationToken token)
         {
             ITestCycle? testCycle = null;
             try
             {
                 Progress = token;
-                TestCycleResult.Clear();
+                TestCycleResult.Clear(testCases);
                 testCycle = _testCases.TestCycle;
                 testCycle.TestFinished += OnTestFinished;
                 await testCycle.RunAsync(
-                    TestCases.Select(tc => tc.TestCase).ToList(),
+                    testCases,
                     token
                 );
             }
@@ -118,19 +114,7 @@ namespace Xunit.Uno.Runner
                     testCycle.TestFinished -= OnTestFinished;
                 }
             }
-
-        }, () => !IsBusy);
-
-        public ICommand NavigateToResultCommand => _commands.AsyncCommand<TestCaseViewModel?>(
-            async (testCase, token) =>
-        {
-            if (testCase != null)
-            {
-                await testCase.RunAsync(token);
-                //await _navigation.NavigateAsync(PageType.TestResult, testCase.TestResult);
-            }
-        }, tc => !IsBusy);
-
+        }
         
         private void OnTestFinished(ITestResult testResult)
         {

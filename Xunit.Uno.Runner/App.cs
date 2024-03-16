@@ -49,6 +49,7 @@ public class App : Application
         views.Register(
             new ViewMap<MainPage, MainViewModel>(),
             new ViewMap<TestCasesPage, TestCasesViewModel>(),
+            new ViewMap<TestResultPage, TestCaseViewModel>(),
             new ViewMap<CreditsPage>()
         );
     }

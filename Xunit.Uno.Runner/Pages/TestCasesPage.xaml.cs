@@ -6,4 +6,9 @@ public partial class TestCasesPage : Page
     {
         InitializeComponent();
     }
+
+    private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        PrimaryButton.Focus(FocusState.Programmatic);
+    }
 }
