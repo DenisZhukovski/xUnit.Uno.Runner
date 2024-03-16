@@ -12,9 +12,9 @@ namespace Xunit.Uno.Runner
         private readonly ITestCases _testCases;
         readonly INavigator _navigation;
         private readonly ICommands _commands;
-        private CancellationToken? _progressCancelToken;
+        private CancellationToken? _progress;
         private readonly ITestFilter _testFilter = new TestFilter();
-        
+
         internal TestCasesViewModel(
             ITestCases testCases,
             INavigator navigation,
@@ -32,22 +32,21 @@ namespace Xunit.Uno.Runner
             InitCommand.Execute();
 		}
 
-        private CancellationToken? ProgressCancelToken
+        private CancellationToken? Progress
         {
-            get => _progressCancelToken;
+            get => _progress;
             set
             {
-                if (_progressCancelToken != value)
+                if (_progress != value)
                 {
-                    _progressCancelToken = value;
+                    _progress = value;
                     RunAllTestsCommand.RaiseCanExecuteChanged();
-                    RunFilteredTestsCommand.RaiseCanExecuteChanged();
                     RaisePropertyChanged(nameof(IsBusy));
                 }
             }
         }
         
-        public bool IsBusy => ProgressCancelToken != null;
+        public bool IsBusy => Progress != null;
         
         public string DisplayName => Path.GetFileNameWithoutExtension(_testCases.GroupName);
         
@@ -64,6 +63,19 @@ namespace Xunit.Uno.Runner
             }
         }
         
+        public string StateFilter
+        {
+            get => _testFilter.State.ToString();
+            set
+            {
+                if (_testFilter.State.ToString() !=  value)
+                {
+                    _testFilter.State = Enum.Parse<TestState>(value);
+                    _filteredTests.Filter = _testFilter;
+                }
+            }
+        }
+        
         public TestCycleResultViewModel TestCycleResult { get; }
 
         public IList<TestCaseViewModel> TestCases => _filteredTests.List;
@@ -72,7 +84,7 @@ namespace Xunit.Uno.Runner
         {
             try
             {
-                ProgressCancelToken = token;
+                Progress = token;
                 var tests = await _testCases.ToViewModels(token);
                 var orderedTests = tests.OrderBy(test => test.DisplayName);
                 await OnUIAsync(() => _allTests.ReplaceWith(orderedTests));
@@ -80,7 +92,7 @@ namespace Xunit.Uno.Runner
             }
             finally
             {
-                ProgressCancelToken = null;
+                Progress = null;
             }
         });
         
@@ -89,7 +101,7 @@ namespace Xunit.Uno.Runner
             ITestCycle? testCycle = null;
             try
             {
-                ProgressCancelToken = token;
+                Progress = token;
                 TestCycleResult.Clear();
                 testCycle = _testCases.TestCycle;
                 testCycle.TestFinished += OnTestFinished;
@@ -100,25 +112,11 @@ namespace Xunit.Uno.Runner
             }
             finally
             {
-                ProgressCancelToken = null;
+                Progress = null;
                 if (testCycle != null)
                 {
                     testCycle.TestFinished -= OnTestFinished;
                 }
-            }
-
-        }, () => !IsBusy);
-
-        public IAsyncCommand RunFilteredTestsCommand => _commands.AsyncCommand(async token =>
-        {
-            try
-            {
-                ProgressCancelToken = token;
-                await _filteredTests.List.RunAsync(token);
-            }
-            finally
-            {
-                ProgressCancelToken = null;
             }
 
         }, () => !IsBusy);

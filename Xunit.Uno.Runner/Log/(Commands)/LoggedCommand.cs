@@ -5,16 +5,14 @@ namespace Xunit.Uno.Runner;
 public class LoggedCommand : ICommand
 {
     private readonly ICommand _origin;
-    private readonly ILog _logger;
+    private readonly ILogger _logger;
     private readonly string? _name;
-    private readonly bool _fullLog;
 
-    public LoggedCommand(ICommand origin, ILog logger, string? name, bool fullLog = true)
+    public LoggedCommand(ICommand origin, ILogger logger, string? name)
     {
         _origin = origin;
         _logger = logger;
         _name = name;
-        _fullLog = fullLog;
     }
 
     public event EventHandler? CanExecuteChanged
@@ -22,19 +20,19 @@ public class LoggedCommand : ICommand
         add
         {
             _origin.CanExecuteChanged += value;
-            if (_fullLog)
-            {
-                _logger.Write("Command", $"Command {_name} CanExecuteChanged subscribed");
-            }
+            _logger.Log(
+                LogLevel.Trace, 
+                "Command {Name} CanExecuteChanged subscribed", _name
+            );
         }
 
         remove
         {
             _origin.CanExecuteChanged -= value;
-            if (_fullLog)
-            {
-                _logger.Write("Command", $"Command {_name} CanExecuteChanged unsubscribed");
-            }
+            _logger.Log(
+                LogLevel.Trace,
+                "Command {Name} CanExecuteChanged unsubscribed", _name
+            );
         }
     }
 
@@ -43,16 +41,16 @@ public class LoggedCommand : ICommand
         try
         {
             var result = _origin.CanExecute(parameter);
-            if (_fullLog)
-            {
-                _logger.Write("Command", $"{_name} Check CanExecute with parameter {parameter} is {result}.");
-            }
+            _logger.Log(
+                LogLevel.Trace, 
+                "{Name} Check CanExecute with parameter {Parameter} is {Result}", _name, parameter, result
+            );
             
             return result;
         }
         catch (Exception ex)
         {
-            _logger.Write("Command", $"{_name} Check CanExecute with {parameter} failed: {ex.Message}.");
+            _logger.LogError(0, ex, "{Name} Check CanExecute with {Parameter} failed", _name, parameter);
             throw;
         }
     }
@@ -62,18 +60,11 @@ public class LoggedCommand : ICommand
         try
         {
             _origin.Execute(parameter);
-            if (_fullLog)
-            {
-                _logger.Write("Command", $"{_name} Execute operation with parameter {parameter} success.");
-            }
+            _logger.Log(LogLevel.Debug, "{Name} Execute operation with parameter {Parameter} success", _name, parameter);
         }
         catch (Exception ex)
         {
-            _logger.Write(
-                "Command",
-                $"{_name} Execute operation with parameter {parameter} failed.",
-                ex
-            );
+            _logger.LogError(0, ex, "{Name} Execute operation with parameter {Parameter} failed", _name, parameter);
             throw;
         }
     }

@@ -22,11 +22,8 @@ public class FilteredCollection<T> : IFilteredCollection<T>, IDisposable
         get => _filter;
         set 
         {
-            if (!Equals(_filter, value))
-            {
-                _filter = value;
-                RefreshFilter();
-            }
+            _filter = value;
+            RefreshFilter();
         }
     }
 

@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
 
 namespace XUnit.Runners.Core.Log;
@@ -5,9 +6,9 @@ namespace XUnit.Runners.Core.Log;
 public class LoggedTestCycle : ITestCycle
 {
     private readonly ITestCycle _origin;
-    private readonly ILog _log;
+    private readonly ILogger _log;
 
-    public LoggedTestCycle(ITestCycle origin, ILog log)
+    public LoggedTestCycle(ITestCycle origin, ILogger log)
     {
         _origin = origin;
         _log = log;
@@ -21,27 +22,31 @@ public class LoggedTestCycle : ITestCycle
 
     public async Task<IReadOnlyList<ITestResult>> RunAsync(IReadOnlyList<ITestCase> testCases, CancellationToken token)
     {
+        int count = testCases.Count;
+        void OnTestFinished(ITestResult testResult)
+        {
+            count--;
+            _log.Log(LogLevel.Debug, "Test finished: {TestResult}", testResult);
+            if (count == 0)
+            {
+                _log.Log(LogLevel.Information, "Test cycle run finished");
+            }
+        }
+        
         try
         {
-            _log.Write("TestCycle", $"Test cycle run started: '{testCases.Count}' tests");
+            _log.Log(LogLevel.Information, "Test cycle run started: '{TestCasesCount}' tests", testCases.Count);
             TestFinished += OnTestFinished;
-            var result = await _origin.RunAsync(testCases, token);
-            _log.Write("TestCycle", $"Test cycle run finished");
-            return result;
+            return await _origin.RunAsync(testCases, token);
         }
         catch (Exception ex)
         {
-            _log.Write("TestCycle", $"Test Cycled run failed.", ex);
+            _log.LogError(0, ex, "Test Cycled run failed");
             throw;
         }
         finally
         {
             TestFinished -= OnTestFinished;
         }
-    }
-
-    private void OnTestFinished(ITestResult testResult)
-    {
-        _log.Write("TestCycle", $"Test finished: {testResult}");
     }
 }

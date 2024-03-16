@@ -3,16 +3,25 @@ using XUnit.Runners.Core.Log;
 
 namespace Xunit.Uno.Runner;
 
-public class DiagnosticViewModel : UIBindableBase, ILog
+public class DiagnosticViewModel : UIBindableBase, ILogger
 {
-    ObservableCollection<string> _messages = new ObservableCollection<string>();
-    
+    ObservableCollection<string> _messages = new();
+    private LogLevel _logLevel = LogLevel.Error;
+
     public ObservableCollection<string> Messages
     {
         get => _messages;
         set => SetProperty(ref _messages, value);
     }
 
+    public LogLevel LogLevel
+    {
+        get => _logLevel;
+        set => SetProperty(ref _logLevel, value);
+    }
+
+    public IList<LogLevel> LogLevels => Enum.GetValues<LogLevel>();
+    
     public void Clear()
     {
         Messages.Clear();
@@ -20,36 +29,42 @@ public class DiagnosticViewModel : UIBindableBase, ILog
 
     public void Write(string message)
     {
-        Write(string.Empty, message);
+        this.Log(LogLevel.Information, message);
     }
 
-    public void Write(string tag, object message)
+    public void Log<TState>(
+        LogLevel logLevel,
+        EventId eventId,
+        TState state,
+        Exception? exception,
+        Func<TState, Exception?, string> formatter)
     {
-        if (message == null)
+        if (!IsEnabled(logLevel))
         {
             return;
         }
         
-        OnUIAsync(() =>
-        {
-            lock (Messages)
-            {
-                Messages.Add(message.ToString());
-            }
-        }).FireAndForget();
-    }
-
-    public void Write(string tag, string message, Exception exception)
-    {
         OnUIAsync(() => 
         {
             lock (Messages)
             {
-                Messages.Add(message);
-                Messages.Add(exception.Message);
+                Messages.Add(formatter(state, exception));
+                if (exception != null)
+                {
+                    Messages.Add(exception.Message);
+                }
             }
             
         }).FireAndForget();
-       
+    }
+
+    public bool IsEnabled(LogLevel logLevel)
+    {
+        return logLevel >= LogLevel;
+    }
+
+    public IDisposable? BeginScope<TState>(TState state) where TState : notnull
+    {
+        throw new NotImplementedException();
     }
 }

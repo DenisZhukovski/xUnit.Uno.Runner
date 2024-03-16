@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
 
 namespace XUnit.Runners.Core.Log;
@@ -5,9 +6,9 @@ namespace XUnit.Runners.Core.Log;
 public class LoggedTestCases : ITestCases
 {
     private readonly ITestCases _origin;
-    private readonly ILog _log;
+    private readonly ILogger _log;
 
-    public LoggedTestCases(ITestCases origin, ILog log)
+    public LoggedTestCases(ITestCases origin, ILogger log)
     {
         _origin = origin;
         _log = log;

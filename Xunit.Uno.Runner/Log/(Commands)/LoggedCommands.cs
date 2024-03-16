@@ -1,20 +1,17 @@
 ﻿using System.Runtime.CompilerServices;
 using Dotnet.Commands;
-using XUnit.Runners.Core.Log;
 
 namespace Xunit.Uno.Runner;
 
 public class LoggedCommands : ICommands
 {
     private readonly ICommands _origin;
-    private readonly ILog _log;
-    private readonly bool _fullLog;
+    private readonly ILogger _log;
 
-    public LoggedCommands(ICommands origin, ILog log, bool fullLog = true)
+    public LoggedCommands(ICommands origin, ILogger log)
     {
         _origin = origin;
         _log = log;
-        _fullLog = fullLog;
     }
 
     public IAsyncCommand AsyncCommand(
@@ -26,8 +23,7 @@ public class LoggedCommands : ICommands
         return new LoggedAsyncCommand(
             _origin.AsyncCommand(execute, canExecute, forceExecution, name),
             _log,
-            name,
-            _fullLog
+            name
         );
     }
 
@@ -40,8 +36,7 @@ public class LoggedCommands : ICommands
         return new LoggedAsyncCommand<TParam>(
             _origin.AsyncCommand(execute, canExecute, forceExecution, name),
             _log,
-            name,
-            _fullLog
+            name
         );
     }
 
@@ -54,8 +49,7 @@ public class LoggedCommands : ICommands
         return new LoggedAsyncCommand<TParam>(
             _origin.AsyncCommand(execute, canExecute, forceExecution, name),
             _log,
-            name,
-            _fullLog
+            name
         );
     }
 
@@ -68,8 +62,7 @@ public class LoggedCommands : ICommands
         return new LoggedCommand(
             _origin.Command(execute, canExecute, forceExecution, name),
             _log,
-            name,
-            _fullLog
+            name
         );
     }
 
@@ -82,8 +75,7 @@ public class LoggedCommands : ICommands
         return new LoggedCommand(
             _origin.Command(execute, canExecute, forceExecution, name),
             _log,
-            name,
-            _fullLog
+            name
         );
     }
 }

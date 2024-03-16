@@ -10,8 +10,5 @@
     <None Include="**\*" Exclude="obj\**;bin\**;*.csproj" />
     <None Update="AppHead.xaml.cs" DependentUpon="AppHead.xaml" />
   </ItemGroup>
-
-  <!-- <ItemGroup>
-    <PackageReference Include="Uno.Extensions.Navigation.WinUI" />
-  </ItemGroup> -->
+  
 </Project>
