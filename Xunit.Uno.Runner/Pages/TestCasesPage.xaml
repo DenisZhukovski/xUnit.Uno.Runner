@@ -48,10 +48,10 @@
       Visibility="{Binding TestCases.Count, Converter={StaticResource CountToVisibilityConverter}, ConverterParameter='Inverse'}" />
     <ListView
       Grid.Row="3"
-      x:Name="TestCasesList"
-      ItemsSource="{Binding TestCases}"
-      SelectionChanged="OnSelectionChanged"
-      SelectionMode="Single">
+      SelectionMode="None"
+      IsItemClickEnabled="True"
+      ItemClickCommand="{Binding NavigateToResultCommand}"
+      ItemsSource="{Binding TestCases}">
       <ListView.ItemTemplate>
         <DataTemplate x:DataType="runner:TestCaseViewModel">
           <StackPanel Padding="20,10" Spacing="5">

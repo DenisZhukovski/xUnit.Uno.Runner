@@ -24,9 +24,10 @@
        x:Name="AllTestsList"
        Margin="0"
        Padding="10, 0"
+       SelectionMode="None"
+       IsItemClickEnabled="True"
        ItemsSource="{Binding AllTests}"
-       SelectionChanged="OnSelectionChanged"
-       SelectionMode="Single">
+       ItemClickCommand="{Binding TestCasesCommand}">
        <ListView.HeaderTemplate>
          <DataTemplate>
            <TextBlock Text="Test Assemblies:" FontWeight="Bold" />

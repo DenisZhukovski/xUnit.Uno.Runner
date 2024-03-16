@@ -1,3 +1,4 @@
+using Microsoft.UI.Xaml.Input;
 using Xunit.Uno.Runner.Navigation;
 
 namespace Xunit.Uno.Runner;
@@ -33,14 +34,5 @@ public sealed partial class MainPage : Page
         {
             navigationAware.OnNavigatedFrom(e);
         }
-    }
-
-    private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (e.AddedItems.Any())
-        {
-            (DataContext as MainViewModel).TestCasesCommand.Execute(e.AddedItems.First());
-        }
-        AllTestsList.SelectedItems.Clear();
     }
 }
