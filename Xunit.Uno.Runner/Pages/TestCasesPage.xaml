@@ -24,6 +24,7 @@
         Text="{Binding Filter.SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
       <ComboBox
         Grid.Column="1"
+        SelectionChanged="Selector_OnSelectionChanged"
         ItemsSource="{Binding Filter.States}"
         SelectedItem="{Binding Filter.StateFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
         Width="130"/>
@@ -66,6 +67,7 @@
       </ListView.ItemTemplate>
     </ListView>
     <Button
+      x:Name="PrimaryButton"
       Grid.Row="4"
       Margin="20, 10"
       HorizontalAlignment="Stretch"

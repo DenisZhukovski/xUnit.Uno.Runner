@@ -73,14 +73,10 @@ namespace Xunit.Uno.Runner
         });
         
         public IAsyncCommand RunAllTestsCommand => _commands.AsyncCommand(
-            token =>
-            {
-                TestCycleResult.Clear();
-                return RunTestCycle(
-                    TestCases.Select(tc => tc.TestCase).ToList(),
-                    token
-                );
-            },
+            token => RunTestCycle(
+                TestCases.Select(tc => tc.TestCase).ToList(),
+                token
+            ),
             () => !IsBusy
         );
         
@@ -102,6 +98,7 @@ namespace Xunit.Uno.Runner
             try
             {
                 Progress = token;
+                TestCycleResult.Clear(testCases);
                 testCycle = _testCases.TestCycle;
                 testCycle.TestFinished += OnTestFinished;
                 await testCycle.RunAsync(

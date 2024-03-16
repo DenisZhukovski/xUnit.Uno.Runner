@@ -7,12 +7,8 @@ public partial class TestCasesPage : Page
         InitializeComponent();
     }
 
-    private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (e.AddedItems.Any())
-        {
-            (DataContext as TestCasesViewModel).NavigateToResultCommand.Execute(e.AddedItems.First());
-        }
-        TestCasesList.SelectedItems.Clear();
+        PrimaryButton.Focus(FocusState.Programmatic);
     }
 }
