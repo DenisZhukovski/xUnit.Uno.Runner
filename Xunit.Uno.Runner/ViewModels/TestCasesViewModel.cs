@@ -63,7 +63,7 @@ namespace Xunit.Uno.Runner
                 Progress = token;
                 var tests = await _testCases.ToViewModels(token);
                 var orderedTests = tests.OrderBy(test => test.DisplayName);
-                await OnUIAsync(() => _allTests.ReplaceWith(orderedTests));
+                await UIThread.OnUIAsync(() => _allTests.ReplaceWith(orderedTests));
                 TestCycleResult.UpdateCaption();
             }
             finally
