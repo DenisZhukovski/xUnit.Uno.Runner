@@ -44,7 +44,7 @@ public class DiagnosticViewModel : UIBindableBase, ILogger
             return;
         }
         
-        OnUIAsync(() => 
+        UIThread.OnUIAsync(() => 
         {
             lock (Messages)
             {

@@ -1,5 +1,6 @@
 using Dotnet.Commands;
 using Microsoft.Extensions.Hosting;
+using Microsoft.UI.Dispatching;
 using XUnit.Runners.Core;
 
 namespace Xunit.Uno.Runner;
@@ -31,10 +32,9 @@ public class App : Application
 #endif
         Host = await MainWindow.InitializeNavigationAsync(
             () => Task.FromResult(builder.Build()),
-            initialNavigate: async (sp, nav) =>
-            {
-                await nav.NavigateViewModelAsync<MainViewModel>(this);
-            }
+            initialNavigate: (sp, nav) => DispatcherQueue
+                .GetForCurrentThread()
+                .OnUIAsync(() => nav.NavigateViewModelAsync<MainViewModel>(this)) 
         );
     }
 

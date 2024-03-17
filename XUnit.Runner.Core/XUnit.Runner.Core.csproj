@@ -9,7 +9,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Uno.Extensions.Navigation.WinUI" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+      <PackageReference Include="Uno.Core.Extensions.Collections" />
       <PackageReference Include="xunit" />
       <PackageReference Include="xunit.core" />
       <PackageReference Include="xunit.runner.utility" />
