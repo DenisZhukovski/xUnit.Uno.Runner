@@ -18,7 +18,7 @@
   </ListView.HeaderTemplate>
   <ListView.ItemTemplate>
     <DataTemplate>
-      <TextBlock Text="{Binding .}" />
+      <TextBlock Text="{Binding .}" TextWrapping="Wrap"/>
     </DataTemplate>
   </ListView.ItemTemplate>
 </ListView>

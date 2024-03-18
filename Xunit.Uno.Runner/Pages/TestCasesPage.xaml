@@ -51,11 +51,12 @@
       Grid.Row="3"
       SelectionMode="None"
       IsItemClickEnabled="True"
+      ContainerContentChanging="ListViewBase_OnContainerContentChanging"
       ItemClickCommand="{Binding NavigateToResultCommand}"
       ItemsSource="{Binding TestCases}">
       <ListView.ItemTemplate>
         <DataTemplate x:DataType="runner:TestCaseViewModel">
-          <StackPanel Padding="20,10" Spacing="5">
+          <StackPanel Padding="10" Spacing="5">
             <TextBlock
               Text="{Binding DisplayName}"
               Foreground="{Binding TestResult.RunStatus, Converter={StaticResource RunStatusToColorConverter}}" />
@@ -67,8 +68,8 @@
       </ListView.ItemTemplate>
     </ListView>
     <Button
-      x:Name="PrimaryButton"
       Grid.Row="4"
+      x:Name="PrimaryButton"
       Margin="20, 10"
       HorizontalAlignment="Stretch"
       VerticalAlignment="Bottom"
