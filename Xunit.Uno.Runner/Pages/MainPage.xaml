@@ -21,7 +21,6 @@
      </ui:NavigationBar>
      <ListView
        Grid.Row="1"
-       x:Name="AllTestsList"
        Margin="0"
        Padding="10, 0"
        SelectionMode="None"

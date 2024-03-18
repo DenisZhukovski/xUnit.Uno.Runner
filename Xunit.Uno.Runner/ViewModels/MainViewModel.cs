@@ -74,7 +74,6 @@ namespace Xunit.Uno.Runner
             {
                await _navigator.NavigateViewAsync<TestCasesPage>(this, data: viewModel);
             }
-           
         });
 
         public IAsyncCommand ScanForTestsCommand => _commands.AsyncCommand(async token =>

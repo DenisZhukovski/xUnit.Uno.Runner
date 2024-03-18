@@ -5,14 +5,15 @@ namespace Xunit.Uno.Runner.Extensions;
 
 public static class AssemblyTestsExtensions
 {
-    public static async Task<ObservableCollection<TestCaseViewModel>> ToViewModels(this ITestCases assembly, CancellationToken token)
+    public static async Task<IList<TestCaseViewModel>> ToViewModels(this ITestCases assembly, CancellationToken token)
     {
         var testCases = await assembly.ToListAsync(token);
-        return new ObservableCollection<TestCaseViewModel>(
-            testCases.Select(
+        return testCases
+            .Select(
                 testCase => new TestCaseViewModel(assembly.GroupName, testCase)
             )
-        );
+            .OrderBy(test => test.DisplayName)
+            .ToList();
     }
 
     public static Task RunAsync(this IEnumerable<TestCaseViewModel> tests, CancellationToken token)
