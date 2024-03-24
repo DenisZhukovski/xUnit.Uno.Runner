@@ -28,6 +28,8 @@ public class FilteredCollection<T> : IFilteredCollection<T>, IDisposable
         }
     }
 
+    public int TotalCount => _source.Count;
+
     public void Dispose()
     {
         _source.CollectionChanged -= OnCollectionChanged;

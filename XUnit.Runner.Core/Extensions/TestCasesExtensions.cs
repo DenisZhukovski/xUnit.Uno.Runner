@@ -35,6 +35,7 @@ public static class TestCasesExtensions
         ITestResultMessage testResult,
         out ITestCase testCase)
     {
+        _ = testCases ?? throw new ArgumentNullException(nameof(testCases));
         testCase = testCases.ByResult(testResult);
         return testCase != null;
     }

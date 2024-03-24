@@ -3,13 +3,17 @@
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   x:Class="Xunit.Uno.Runner.UX.Diagnostics"
   SelectionMode="None"
+  Padding="10"
   ItemsSource="{Binding Diagnostic.Messages}">
   <ListView.HeaderTemplate>
     <DataTemplate>
       <Grid ColumnSpacing="10" ColumnDefinitions="*,Auto" RowDefinitions="Auto">
-        <TextBlock Text="Diagnostic Information:" FontWeight="Bold" VerticalAlignment="Center" />
+        <TextBlock
+          Text="Logs"
+          Style="{StaticResource TitleLarge}" />
         <ComboBox
           Grid.Column="1"
+          Style="{StaticResource NativePopupComboBoxStyle}"
           ItemsSource="{Binding Diagnostic.LogLevels}"
           SelectedItem="{Binding Diagnostic.LogLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
           Width="130"/>

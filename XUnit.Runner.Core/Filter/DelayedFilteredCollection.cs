@@ -19,6 +19,8 @@ public class DelayedFilteredCollection<T> : IFilteredCollection<T>
         _delay = delay;
     }
 
+    public int TotalCount => _origin.TotalCount;
+    
     public ObservableCollection<T> List => _origin.List;
 
     public object? Filter
@@ -28,13 +30,20 @@ public class DelayedFilteredCollection<T> : IFilteredCollection<T>
         {
             _filterCancellation?.Cancel();
             _filterCancellation = new CancellationTokenSource();
-            Task.Delay(_delay, _filterCancellation.Token)
-                .ContinueWith(
-                    x => _origin.Filter = value,
-                    _filterCancellation.Token,
-                    TaskContinuationOptions.None,
-                    TaskScheduler.FromCurrentSynchronizationContext()
-                );
+            if (TotalCount > 50)
+            {
+                Task.Delay(_delay, _filterCancellation.Token)
+                    .ContinueWith(
+                        x => _origin.Filter = value,
+                        _filterCancellation.Token,
+                        TaskContinuationOptions.None,
+                        TaskScheduler.FromCurrentSynchronizationContext()
+                    );
+            }
+            else
+            {
+                _origin.Filter = value;
+            }
         }
     }
 }

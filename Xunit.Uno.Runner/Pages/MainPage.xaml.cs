@@ -1,4 +1,4 @@
-using Microsoft.UI.Xaml.Input;
+using Uno.Toolkit.UI;
 using Xunit.Uno.Runner.Navigation;
 
 namespace Xunit.Uno.Runner;
@@ -6,12 +6,13 @@ namespace Xunit.Uno.Runner;
 public sealed partial class MainPage : Page
 {
     private NavigationEventArgs? _onNavigatedToArgs;
-
+    
     public MainPage()
     {
         this.InitializeComponent();
+        StatusBar.SetForeground(StatusBarForegroundTheme.Dark);
     }
-
+    
     protected override void OnDataContextChanged(DependencyPropertyChangedEventArgs e)
     {
         base.OnDataContextChanged(e);

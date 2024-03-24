@@ -36,7 +36,10 @@ public class App : Application
                 .GetForCurrentThread()
                 .OnUIAsync(() => nav.NavigateViewModelAsync<MainViewModel>(this)) 
         );
+        
+        // new UX.StatusBar().UpdateStatusBar();
     }
+    
 
     private static void RegisterServices(HostBuilderContext context, IServiceCollection services)
     {

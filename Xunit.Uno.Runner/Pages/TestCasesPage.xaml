@@ -56,8 +56,9 @@
       ItemsSource="{Binding TestCases}">
       <ListView.ItemTemplate>
         <DataTemplate x:DataType="runner:TestCaseViewModel">
-          <StackPanel Padding="10" Spacing="5">
+          <StackPanel Style="{StaticResource ListItemStack}">
             <TextBlock
+              Style="{StaticResource TitleLarge}"
               Text="{Binding DisplayName}"
               Foreground="{Binding TestResult.RunStatus, Converter={StaticResource RunStatusToColorConverter}}" />
             <TextBlock
