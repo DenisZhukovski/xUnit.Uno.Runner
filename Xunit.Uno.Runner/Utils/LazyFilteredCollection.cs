@@ -5,6 +5,9 @@ using XUnit.Runners.Core;
 
 namespace Xunit.Uno.Runner;
 
+/// <summary>
+/// Usually used to make navigation between the pages to be more smooth
+/// </summary>
 public class LazyFilteredCollection<T> : IFilteredCollection<T>
 {
     private readonly IFilteredCollection<T> _origin;
