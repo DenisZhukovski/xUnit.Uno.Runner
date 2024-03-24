@@ -36,8 +36,6 @@ public class App : Application
                 .GetForCurrentThread()
                 .OnUIAsync(() => nav.NavigateViewModelAsync<MainViewModel>(this)) 
         );
-        
-        // new UX.StatusBar().UpdateStatusBar();
     }
     
 
