@@ -2,10 +2,9 @@
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:ux="clr-namespace:Xunit.Uno.Runner.UX"
+  xmlns:toolkit="clr-namespace:Uno.UI.Toolkit;assembly=Uno.UI.Toolkit"
   x:Class="Xunit.Uno.Runner.UX.TestCasesListItem"
-  Padding="0, 10"
-  Margin="0"
-  RowSpacing="5">
+  Style="{StaticResource ListItem}">
   <Grid.Resources>
     <ux:RunStatusToColorConverter x:Key="RunStatusToColorConverter"/>
   </Grid.Resources>
@@ -13,17 +12,34 @@
     <RowDefinition Height="Auto"/>
     <RowDefinition Height="Auto"/>
   </Grid.RowDefinitions>
+  <Grid.ColumnDefinitions>
+    <ColumnDefinition Width="10"/>
+    <ColumnDefinition Width="*"/>
+  </Grid.ColumnDefinitions>
+  <Border
+    Grid.RowSpan="2"
+    BorderThickness="1"
+    CornerRadius="10, 0, 0, 10"
+    Background="{Binding TestCycleResult.RunStatus, Converter={StaticResource RunStatusToColorConverter}}"
+    BorderBrush="{Binding TestCycleResult.RunStatus, Converter={StaticResource RunStatusToColorConverter}}"/>
   <TextBlock
     Grid.Row="0"
-    Text="{Binding DisplayName}"
-    Foreground="{Binding TestCycleResult.RunStatus, Converter={StaticResource RunStatusToColorConverter}}" />
-  <ux:TestCycleResult Grid.Row="1" />
+    Grid.Column="1"
+    Style="{StaticResource TitleLarge}"
+    Margin="10, 5, 0, 0"
+    Text="{Binding DisplayName}" />
+  <ux:TestCycleResult
+    Grid.Column="1"
+    Grid.Row="1"
+    Margin="10, 0, 0, 10"/>
   <ProgressRing
     Grid.Row="0"
+    Grid.Column="1"
     Grid.RowSpan="2"
     IsActive="{Binding IsBusy}"
     VerticalAlignment="Center"
     HorizontalAlignment="Right"
+    Margin="0, 0, 10, 0"
     Width="5"
     Height="5" />
 </Grid>

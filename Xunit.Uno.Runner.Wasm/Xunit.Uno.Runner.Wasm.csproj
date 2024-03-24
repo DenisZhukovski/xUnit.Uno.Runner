@@ -47,6 +47,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Windows.Compatibility" />
     <PackageReference Include="Uno.Extensions.Navigation.WinUI" />
+    <PackageReference Include="Uno.Toolkit.WinUI.Material" />
     <PackageReference Include="Uno.Wasm.Bootstrap" />
     <PackageReference Include="Uno.Wasm.Bootstrap.DevServer" />
     <PackageReference Include="Uno.WinUI.WebAssembly" />

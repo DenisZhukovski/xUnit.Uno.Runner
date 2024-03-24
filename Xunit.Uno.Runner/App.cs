@@ -37,6 +37,7 @@ public class App : Application
                 .OnUIAsync(() => nav.NavigateViewModelAsync<MainViewModel>(this)) 
         );
     }
+    
 
     private static void RegisterServices(HostBuilderContext context, IServiceCollection services)
     {

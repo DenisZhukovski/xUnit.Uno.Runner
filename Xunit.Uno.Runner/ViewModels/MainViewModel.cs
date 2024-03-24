@@ -72,7 +72,7 @@ namespace Xunit.Uno.Runner
         {
             if (viewModel != null)
             {
-               await _navigator.NavigateViewAsync<TestCasesPage>(this, data: viewModel);
+                await _navigator.NavigateViewAsync<TestCasesPage>(this, data: viewModel);
             }
         });
 

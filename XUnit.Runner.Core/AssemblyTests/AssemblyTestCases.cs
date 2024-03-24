@@ -6,8 +6,9 @@ namespace XUnit.Runners.Core;
 public class AssemblyTestCases(Assembly assembly) : ITestCases
 {
     private readonly Assembly _assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
+    private string? _name;
 
-    public string GroupName => _assembly.CrossPlatformLocation();
+    public string GroupName => _name ??= _assembly.CrossPlatformLocation();
 
     /// <summary>
     /// Each time returns new test cycle

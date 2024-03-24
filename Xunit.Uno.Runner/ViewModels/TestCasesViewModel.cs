@@ -54,7 +54,10 @@ namespace Xunit.Uno.Runner
 
         public TestsFilterViewModel Filter { get; }
         
-        public IList<TestCaseViewModel> TestCases => _filteredTests.List;
+        /*
+         * IMPORTANT: LazyFilteredCollection used to make navigation to the page to be more smooth
+         */
+        public IList<TestCaseViewModel> TestCases => new LazyFilteredCollection<TestCaseViewModel>(_filteredTests, UIThread).List;
 
         public IAsyncCommand InitCommand => _commands.AsyncCommand(async token =>
         {
@@ -73,7 +76,7 @@ namespace Xunit.Uno.Runner
         
         public IAsyncCommand RunAllTestsCommand => _commands.AsyncCommand(
             token => RunTestCycle(
-                TestCases.Select(tc => tc.TestCase).ToList(),
+                _filteredTests.List.Select(tc => tc.TestCase).ToList(),
                 token
             ),
             () => !IsBusy

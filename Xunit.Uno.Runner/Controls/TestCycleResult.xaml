@@ -9,10 +9,10 @@
     Foreground="{StaticResource VisualRunnerSuccessfulTestsColor}"
     Margin="0,0,15,0" />
 
-  <TextBlock Text="⛔" Foreground="{StaticResource VisualRunnerFailedTestsColor}" />
+  <TextBlock Text="⛔" Foreground="{StaticResource ErrorBrush}" />
   <TextBlock
     Text="{Binding TestCycleResult.Failed}"
-    Foreground="{StaticResource VisualRunnerFailedTestsColor}"
+    Foreground="{StaticResource ErrorBrush}"
     Margin="0,0,15,0" />
 
   <TextBlock Text="⚠" Foreground="{StaticResource VisualRunnerSkippedTestsColor}" />

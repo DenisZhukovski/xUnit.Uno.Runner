@@ -4,34 +4,28 @@
       xmlns:ui="clr-namespace:Uno.Toolkit.UI;assembly=Uno.Toolkit.WinUI"
       xmlns:viewModels="clr-namespace:Xunit.Uno.Runner;assembly=Xunit.Uno.Runner"
       xmlns:ux="clr-namespace:Xunit.Uno.Runner.UX"
-      x:Class="Xunit.Uno.Runner.MainPage"
-      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-   <Grid RowDefinitions="Auto, *, Auto" MaxWidth="1000">
+      xmlns:toolkit="clr-namespace:Uno.UI.Toolkit;assembly=Uno.UI.Toolkit"
+      Style="{StaticResource PageStyle}"
+      x:Class="Xunit.Uno.Runner.MainPage">
+   <Grid
+     ui:SafeArea.Insets="VisibleBounds"
+     RowDefinitions="Auto, *, Auto" MaxWidth="1000">
      <ui:NavigationBar
-       Style="{StaticResource NativeDefaultNavigationBar}"
        MainCommandMode="Action"
-       Content="Test Runner">
-       <ui:NavigationBar.MainCommand>
-         <AppBarButton Command="{Binding CreditsCommand}">
-           <AppBarButton.Icon>
-             <BitmapIcon UriSource="ms-appx:///Xunit.Uno.Runner/Assets/Icons/xunit.png" />
-           </AppBarButton.Icon>
-         </AppBarButton>
-       </ui:NavigationBar.MainCommand>
+       Style="{StaticResource MaterialNavigationBarStyle}"
+       Subtitle="xUnit test runner"
+       Content="Test Assemblies">
+       <ui:NavigationBar.SecondaryCommands>
+         <AppBarButton Label="Credits" Command="{Binding CreditsCommand}"/>
+       </ui:NavigationBar.SecondaryCommands>
      </ui:NavigationBar>
      <ListView
        Grid.Row="1"
-       Margin="0"
-       Padding="10, 0"
+       Style="{StaticResource MaterialListViewStyle}"
        SelectionMode="None"
        IsItemClickEnabled="True"
        ItemsSource="{Binding AllTests}"
        ItemClickCommand="{Binding TestCasesCommand}">
-       <ListView.HeaderTemplate>
-         <DataTemplate>
-           <TextBlock Text="Test Assemblies:" FontWeight="Bold" />
-         </DataTemplate>
-       </ListView.HeaderTemplate>
        <ListView.ItemTemplate>
          <DataTemplate x:DataType="viewModels:TestCasesViewModel">
            <ux:TestCasesListItem/>
